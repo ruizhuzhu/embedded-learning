@@ -1,0 +1,327 @@
+{
+  "metadata": {
+    "created": "2026-06-04",
+    "last_updated": "2026-06-04 23:25:48",
+    "total_days_generated": 4,
+    "repeat_window_days": 90
+  },
+  "usage": {
+    "c_016": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "c_language",
+      "difficulty": "medium"
+    },
+    "c_014": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "c_language",
+      "difficulty": "medium"
+    },
+    "cpp_007": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "cpp_embedded",
+      "difficulty": "medium"
+    },
+    "embed_002": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "embedded_core",
+      "difficulty": "medium"
+    },
+    "cpp_008": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "cpp_embedded",
+      "difficulty": "medium"
+    },
+    "cpp_004": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "cpp_embedded",
+      "difficulty": "medium"
+    },
+    "periph_006": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "peripherals",
+      "difficulty": "medium"
+    },
+    "dbg_004": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "debugging",
+      "difficulty": "medium"
+    },
+    "embed_007": {
+      "first_served": "2026-06-05",
+      "times_served": 1,
+      "dates": [
+        "2026-06-05"
+      ],
+      "category": "embedded_core",
+      "difficulty": "medium"
+    },
+    "embed_010": {
+      "first_served": "2026-06-05",
+      "times_served": 1,
+      "dates": [
+        "2026-06-05"
+      ],
+      "category": "embedded_core",
+      "difficulty": "medium"
+    },
+    "ds_006": {
+      "first_served": "2026-06-05",
+      "times_served": 1,
+      "dates": [
+        "2026-06-05"
+      ],
+      "category": "data_structures",
+      "difficulty": "medium"
+    },
+    "ds_002": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "data_structures",
+      "difficulty": "easy"
+    },
+    "ds_007": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "data_structures",
+      "difficulty": "easy"
+    },
+    "embed_006": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "embedded_core",
+      "difficulty": "easy"
+    },
+    "c_012": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "c_language",
+      "difficulty": "medium"
+    },
+    "code_004": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "coding_problems",
+      "difficulty": "medium"
+    },
+    "code_001": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "coding_problems",
+      "difficulty": "easy"
+    },
+    "periph_007": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "peripherals",
+      "difficulty": "easy"
+    },
+    "dbg_002": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "debugging",
+      "difficulty": "easy"
+    },
+    "dbg_005": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "debugging",
+      "difficulty": "medium"
+    },
+    "dbg_003": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "debugging",
+      "difficulty": "medium"
+    },
+    "code_005": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "coding_problems",
+      "difficulty": "medium"
+    },
+    "c_004": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "c_language",
+      "difficulty": "medium"
+    },
+    "embed_008": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "embedded_core",
+      "difficulty": "medium"
+    },
+    "embed_009": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "embedded_core",
+      "difficulty": "easy"
+    },
+    "code_003": {
+      "first_served": "2026-06-04",
+      "times_served": 1,
+      "dates": [
+        "2026-06-04"
+      ],
+      "category": "coding_problems",
+      "difficulty": "easy"
+    }
+  },
+  "daily_log": {
+    "2026-06-05": {
+      "primary_category": "embedded_core",
+      "question_ids": [
+        "embed_007",
+        "embed_010",
+        "ds_006"
+      ],
+      "types": [
+        "multiple_choice",
+        "coding_problem",
+        "coding_problem"
+      ],
+      "difficulties": [
+        "medium",
+        "medium",
+        "medium"
+      ]
+    },
+    "2026-06-06": {
+      "primary_category": "coding_problems",
+      "question_ids": [
+        "code_004",
+        "code_001",
+        "periph_007",
+        "dbg_002"
+      ],
+      "types": [
+        "coding_problem",
+        "coding_problem",
+        "multiple_choice",
+        "multiple_choice"
+      ],
+      "difficulties": [
+        "medium",
+        "easy",
+        "easy",
+        "easy"
+      ]
+    },
+    "2026-06-07": {
+      "primary_category": "debugging",
+      "question_ids": [
+        "dbg_005",
+        "dbg_003",
+        "code_005",
+        "c_004"
+      ],
+      "types": [
+        "multiple_choice",
+        "short_answer",
+        "coding_problem",
+        "short_answer"
+      ],
+      "difficulties": [
+        "medium",
+        "medium",
+        "medium",
+        "medium"
+      ]
+    },
+    "2026-06-04": {
+      "primary_category": "embedded_core",
+      "question_ids": [
+        "embed_008",
+        "embed_009",
+        "code_003"
+      ],
+      "types": [
+        "short_answer",
+        "multiple_choice",
+        "coding_problem"
+      ],
+      "difficulties": [
+        "medium",
+        "easy",
+        "easy"
+      ]
+    }
+  },
+  "rotation_state": {
+    "current_index": 0
+  }
+}

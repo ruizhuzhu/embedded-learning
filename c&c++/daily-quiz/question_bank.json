@@ -1,0 +1,952 @@
+{
+  "categories": {
+    "c_language": "C 语言核心",
+    "cpp_embedded": "C++ 嵌入式编程",
+    "embedded_core": "嵌入式系统核心",
+    "peripherals": "外设与通信协议",
+    "data_structures": "数据结构与算法",
+    "debugging": "调试与工具",
+    "coding_problems": "实战编程题"
+  },
+  "questions": [
+    {
+      "id": "c_001",
+      "category": "c_language",
+      "subcategory": "volatile",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["volatile", "compiler-optimization", "memory-mapped-io"],
+      "question": "在嵌入式 C 编程中，`volatile` 关键字的主要作用是什么？",
+      "options": [
+        "A. 将变量存储在 ROM 而非 RAM 中",
+        "B. 告诉编译器每次访问该变量时都从内存读取，禁止优化掉看似多余的读写",
+        "C. 使变量成为只读，防止意外修改",
+        "D. 使变量可以在多个源文件中共享"
+      ],
+      "answer": "B",
+      "explanation": "`volatile` 告诉编译器该变量的值可能在程序流程之外被改变（如硬件寄存器、ISR、其他线程），因此每次访问都必须从内存实际读取，不能使用缓存在寄存器中的值。这在访问内存映射 I/O 寄存器时是必需的。选项 C 是 `const` 的作用；选项 D 是 `extern` 的用途。"
+    },
+    {
+      "id": "c_002",
+      "category": "c_language",
+      "subcategory": "pointers",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["pointer", "array", "memory"],
+      "question": "给定 `int arr[5] = {1, 2, 3, 4, 5};`，`*(arr + 2)` 的值是多少？",
+      "options": ["A. 1", "B. 2", "C. 3", "D. 4"],
+      "answer": "C",
+      "explanation": "`arr` 是指向数组首元素的指针。`arr + 2` 指向第三个元素（索引 2），`*(arr + 2)` 等价于 `arr[2]`，值为 3。数组下标 `arr[i]` 在 C 语言中本质上就是 `*(arr + i)` 的语法糖。"
+    },
+    {
+      "id": "c_003",
+      "category": "c_language",
+      "subcategory": "const",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["const", "pointer", "type-qualifier"],
+      "question": "以下声明中，哪个表示\"指针本身不可修改，但指向的数据可修改\"？",
+      "options": [
+        "A. `const int *p;`",
+        "B. `int const *p;`",
+        "C. `int *const p;`",
+        "D. `const int *const p;`"
+      ],
+      "answer": "C",
+      "explanation": "`int *const p` 中 `const` 修饰的是 `p` 本身，表示指针是常量（不可重新指向其他地址），但 `*p` 指向的 int 数据可以修改。A 和 B 等价，都是指向常量的指针（数据不可改）；D 是两者都不可改。记忆技巧：从右向左读声明。"
+    },
+    {
+      "id": "c_004",
+      "category": "c_language",
+      "subcategory": "static",
+      "type": "short_answer",
+      "difficulty": "medium",
+      "tags": ["static", "scope", "lifetime", "embedded"],
+      "question": "在嵌入式 C 中，`static` 关键字有三种不同的用法。请分别说明 `static` 用于函数内的局部变量、用于文件作用域的全局变量、以及用于函数声明时的不同含义，并解释为什么在嵌入式系统中合理使用 `static` 很重要。",
+      "answer": "1. **函数内 static 局部变量**：变量的生命周期变为整个程序运行期间（存储在 .data 或 .bss 段），但作用域仍限于函数内。常用于需要跨函数调用保持状态的场景。\n2. **文件作用域 static 全局变量**：限制变量的链接属性为 internal linkage，即仅在当前 .c 文件内可见。其他文件无法通过 `extern` 引用。\n3. **static 函数**：限制函数的链接属性为 internal linkage，仅在当前 .c 文件内可调用。\n\n嵌入式系统中合理使用 static 的重要性：减少全局命名空间污染、防止其他模块意外修改数据、编译器可以更好地优化（内联等），有助于模块化和封装。",
+      "explanation": "理解 static 的三种用法是嵌入式 C 面试中的高频问题。在资源受限的嵌入式系统中，正确使用 static 可以减少 RAM 使用并提高代码安全性。"
+    },
+    {
+      "id": "c_005",
+      "category": "c_language",
+      "subcategory": "bit-manipulation",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["bit-manipulation", "macro", "register"],
+      "question": "请编写一个宏 `SET_BIT(reg, bit)` 将寄存器 `reg` 的第 `bit` 位置 1，以及一个宏 `CLEAR_BIT(reg, bit)` 将第 `bit` 位清零，再写一个 `TOGGLE_BIT(reg, bit)` 翻转第 `bit` 位。要求宏能正确处理各种参数类型。",
+      "code_template": "// 请在下方编写三个宏\n#define SET_BIT(reg, bit)     \n#define CLEAR_BIT(reg, bit)   \n#define TOGGLE_BIT(reg, bit)  \n",
+      "code_solution": "#define SET_BIT(reg, bit)     ((reg) |= (1U << (bit)))\n#define CLEAR_BIT(reg, bit)   ((reg) &= ~(1U << (bit)))\n#define TOGGLE_BIT(reg, bit)  ((reg) ^= (1U << (bit)))\n",
+      "explanation": "1. `SET_BIT`: 将 1 左移 bit 位后与 reg 做 OR 运算。\n2. `CLEAR_BIT`: 将 1 左移 bit 位后取反，再与 reg 做 AND，这样只有目标位被清零。\n3. `TOGGLE_BIT`: 用 XOR 运算翻转指定位。\n使用 `1U`（unsigned）避免有符号整数的移位问题，参数加括号防止宏展开时的优先级错误。"
+    },
+    {
+      "id": "c_006",
+      "category": "c_language",
+      "subcategory": "struct-union",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["struct", "memory-alignment", "padding"],
+      "question": "在 32 位 ARM 处理器上，以下结构体的 sizeof 是多少？\n```c\nstruct Example {\n    char a;\n    int  b;\n    char c;\n    short d;\n};\n```",
+      "options": ["A. 8 字节", "B. 10 字节", "C. 12 字节", "D. 16 字节"],
+      "answer": "C",
+      "explanation": "内存对齐分析（32位，默认对齐）：\n- `char a` 偏移 0，占 1 字节\n- `int b` 需要 4 字节对齐，偏移从 4 开始，占 4 字节（偏移 1-3 是 padding）\n- `char c` 偏移 8，占 1 字节\n- `short d` 需要 2 字节对齐，偏移从 10 开始，占 2 字节（偏移 9 是 padding）\n- 结构体总大小需要是最大对齐成员（int = 4）的倍数，所以从 12 补齐到 12\n总计: 12 字节。使用 `__attribute__((packed))` 可以消除填充。"
+    },
+    {
+      "id": "c_007",
+      "category": "c_language",
+      "subcategory": "function-pointers",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["function-pointer", "callback", "typedef"],
+      "question": "在嵌入式系统中，函数指针常用于回调机制。以下哪个声明正确地定义了一个指向\"接受两个 int 参数并返回 void\"的函数指针类型？",
+      "options": [
+        "A. `typedef void (*Callback)(int, int);`",
+        "B. `typedef void *Callback(int, int);`",
+        "C. `typedef void Callback(int, int)*;`",
+        "D. `typedef (void *)(int, int) Callback;`"
+      ],
+      "answer": "A",
+      "explanation": "正确的声明是 `typedef void (*Callback)(int, int);`。解析：`(*Callback)` 表示 Callback 是一个指针，它指向一个接受 `(int, int)` 参数、返回 `void` 的函数。使用时：`Callback my_cb = some_function; my_cb(1, 2);`。这在嵌入式中断回调、HAL 库的回调机制中广泛使用。"
+    },
+    {
+      "id": "c_008",
+      "category": "c_language",
+      "subcategory": "preprocessor",
+      "type": "code_analysis",
+      "difficulty": "hard",
+      "tags": ["macro", "preprocessor", "pitfall"],
+      "question": "以下宏有什么潜在的 bug？请找出问题并给出修正方案。\n```c\n#define SQUARE(x)  x * x\n\nint main() {\n    int a = 5;\n    int result = SQUARE(a + 1);\n    printf(\"%d\\n\", result);\n    return 0;\n}\n```",
+      "buggy_code": "#define SQUARE(x)  x * x\n\nint main() {\n    int a = 5;\n    int result = SQUARE(a + 1);  // 预期 36，实际？\n    printf(\"%d\\n\", result);\n    return 0;\n}\n",
+      "fixed_code": "#define SQUARE(x)  ((x) * (x))\n\nint main() {\n    int a = 5;\n    int result = SQUARE(a + 1);  // 正确得到 ((5+1) * (5+1)) = 36\n    printf(\"%d\\n\", result);\n    return 0;\n}\n",
+      "answer": "宏展开后变成 `a + 1 * a + 1`，由于运算符优先级，先算 `1 * a = 5`，再算 `a + 5 + 1 = 11`，结果不是预期的 36。修正：参数用括号包裹，整个表达式也用括号包裹：`#define SQUARE(x) ((x) * (x))`。这是宏的一个经典陷阱。",
+      "explanation": "宏是简单的文本替换，不做类型检查也不管运算符优先级。编写宏时，每个参数和整个表达式都应该用括号包裹。更好的替代方案是使用 inline 函数（C99+），它有类型安全和求值顺序保证。"
+    },
+    {
+      "id": "c_009",
+      "category": "c_language",
+      "subcategory": "endianness",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["endianness", "byte-order", "network-protocol"],
+      "question": "在一个大端（Big-Endian）系统中，32 位整数 `0x12345678` 在内存中的字节排列顺序（从低地址到高地址）是什么？",
+      "options": [
+        "A. 12 34 56 78",
+        "B. 78 56 34 12",
+        "C. 34 12 78 56",
+        "D. 56 78 12 34"
+      ],
+      "answer": "A",
+      "explanation": "大端模式：高位字节存储在低地址。0x12 是最高字节，存储在最低地址 → 12 34 56 78。小端模式正好相反：78 56 34 12。嵌入式工程师在处理网络协议（大端/网络字节序）、跨平台数据交换、直接操作内存时需要特别注意字节序问题。"
+    },
+    {
+      "id": "c_010",
+      "category": "c_language",
+      "subcategory": "memory-alignment",
+      "type": "short_answer",
+      "difficulty": "medium",
+      "tags": ["alignment", "performance", "hard-fault"],
+      "question": "什么是非对齐内存访问（Unaligned Memory Access）？在 ARM Cortex-M 系列 MCU 上，非对齐访问可能导致什么问题？如何在代码中避免？",
+      "answer": "**非对齐访问**：当 CPU 访问一个地址不是其数据大小整数倍的内存时发生。例如，在 32 位总线上从地址 0x20000001 读取一个 32 位整数。\n\n**ARM Cortex-M 的问题**：\n- Cortex-M0/M0+：不支持非对齐访问，会触发 HardFault\n- Cortex-M3/M4/M7：支持部分非对齐访问（LDR/STR），但 LDM/STM 等多寄存器指令仍需对齐\n- 即使硬件支持，非对齐访问通常需要多个总线周期，性能下降\n\n**避免方法**：\n- 使用 `__attribute__((aligned(n)))` 或 `#pragma pack` 控制对齐\n- 需要跨字节序传输时使用 `memcpy()` 而非直接指针转换\n- 使用编译器内置函数 `__UNALIGNED_UINT32()` 等（CMSIS 提供）\n- 在链接脚本中确保关键数据结构对齐",
+      "explanation": "这是嵌入式开发中的实际问题，面试官常以此考察候选人对硬件底层细节的理解。"
+    },
+    {
+      "id": "c_011",
+      "category": "c_language",
+      "subcategory": "memory-layout",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["memory", "stack", "heap", "bss"],
+      "question": "嵌入式程序的典型内存布局中，未初始化的全局变量存储在哪个段？",
+      "options": [
+        "A. .text 段",
+        "B. .data 段",
+        "C. .bss 段",
+        "D. .stack 段"
+      ],
+      "answer": "C",
+      "explanation": "- **.text**: 代码/指令\n- **.data**: 已初始化的全局/静态变量\n- **.bss**: 未初始化（或初始化为 0）的全局/静态变量，启动时清零\n- **.stack**: 局部变量、函数调用返回地址\n- **.heap**: 动态分配（malloc）的内存\n\n嵌入式启动代码中通常需要清零 .bss 段并初始化 .data 段（从 ROM 复制初始值）。"
+    },
+    {
+      "id": "c_012",
+      "category": "c_language",
+      "subcategory": "pointer-arithmetic",
+      "type": "code_analysis",
+      "difficulty": "medium",
+      "tags": ["pointer", "increment", "precedence"],
+      "question": "以下代码的输出是什么？请解释原因。\n```c\nint arr[] = {10, 20, 30, 40, 50};\nint *p = arr;\nprintf(\"%d\\n\", *p++);\nprintf(\"%d\\n\", *++p);\nprintf(\"%d\\n\", ++*p);\n```",
+      "answer": "输出：\n- `*p++` → 10（后缀递增：先取值再递增指针）\n- `*++p` → 30（前缀递增：先递增指针再取值；上一步 p 已指向 arr[1]）\n- `++*p` → 31（先取值再递增值；p 指向 arr[2] 即 30，递增后变为 31）",
+      "explanation": "这是经典的指针操作优先级问题：\n1. `*p++` 等价于 `*(p++)`，后缀 ++ 优先级高于 *，但后缀 ++ 返回旧值\n2. `*++p` 等价于 `*(++p)`，先移动指针再解引用\n3. `++*p` 等价于 `++(*p)`，解引用后递增指向的值\n\n面试常考题，考察对 C 运算符优先级和指针操作的扎实理解。"
+    },
+    {
+      "id": "c_013",
+      "category": "c_language",
+      "subcategory": "inline-assembly",
+      "type": "short_answer",
+      "difficulty": "hard",
+      "tags": ["inline-assembly", "barrier", "optimization"],
+      "question": "在嵌入式 C 中，什么情况下需要使用内联汇编（inline assembly）？请列举至少三种场景，并说明 GCC 内联汇编中 `volatile` 修饰符和 `\"memory\"` clobber 的作用。",
+      "answer": "**需要内联汇编的场景**：\n1. 访问 C 语言无法直接操作的 CPU 特殊寄存器（如 CPSR、PRIMASK、CONTROL）\n2. 实现临界区保护的关中断/开中断操作（`__disable_irq()` 通常就是内联汇编实现）\n3. 执行特殊 CPU 指令（如 WFI/WFE 等待指令、DSB/DMB/ISB 内存屏障、BKPT 断点指令）\n4. 需要精确时序控制的场景（位翻转等）\n5. 上下文切换时保存/恢复寄存器\n\n**`volatile` 修饰符**：告诉编译器不要优化掉这个内联汇编块，即使它看起来没有输出。\n\n**`\"memory\"` clobber**：告诉编译器这段汇编可能读取或写入任意内存位置，编译器因此不会将内存读/写操作重排到内联汇编的任意一侧。这在操作 DMA 缓冲区、内存映射寄存器时至关重要。",
+      "explanation": "深入理解内联汇编对于做底层驱动、RTOS 移植、启动代码的嵌入式工程师是必备技能。"
+    },
+    {
+      "id": "c_014",
+      "category": "c_language",
+      "subcategory": "struct-bitfield",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["bitfield", "struct", "register-mapping"],
+      "question": "在嵌入式编程中，位域（bit-field）常用于映射硬件寄存器。请使用位域定义一个 8 位的控制寄存器结构体，包含以下字段：\n- EN (bit 0): 使能位\n- MODE (bit 1-2): 模式选择，2 位\n- IE (bit 3): 中断使能\n- FLAG (bit 4-6): 状态标志，3 位\n- RESERVED (bit 7): 保留位\n\n然后编写代码将其映射到地址 0x40001000。",
+      "code_template": "// 请定义位域结构体并映射到硬件地址\ntypedef struct {\n    \n} CtrlReg;\n\n// 映射到硬件地址\n",
+      "code_solution": "typedef struct {\n    uint8_t EN      : 1;  // bit 0: 使能位\n    uint8_t MODE    : 2;  // bit 1-2: 模式选择\n    uint8_t IE      : 1;  // bit 3: 中断使能\n    uint8_t FLAG    : 3;  // bit 4-6: 状态标志\n    uint8_t         : 1;  // bit 7: 保留位（匿名位域）\n} CtrlReg;\n\nvolatile CtrlReg *reg = (volatile CtrlReg *)0x40001000;\n// 使用: reg->EN = 1; reg->MODE = 2; if (reg->FLAG & 0x01) {...}\n",
+      "explanation": "位域让代码更可读，但需要注意：\n1. 必须加 `volatile` 防止编译器优化掉读写\n2. 位域的内存布局是编译器相关的（C 标准未规定），跨平台移植需验证\n3. 匿名位域 `: 1` 用于跳过保留位\n4. 部分团队倾向于用 `#define` 掩码手动操作而非位域，因为位域存在移植性问题"
+    },
+    {
+      "id": "c_015",
+      "category": "c_language",
+      "subcategory": "restrict",
+      "type": "multiple_choice",
+      "difficulty": "hard",
+      "tags": ["restrict", "optimization", "c99"],
+      "question": "C99 引入的 `restrict` 关键字的作用是什么？在嵌入式开发中何时应该使用它？",
+      "options": [
+        "A. 限制指针只能指向常量数据",
+        "B. 告诉编译器该指针是访问其指向对象的唯一方式，允许编译器做更激进的优化",
+        "C. 限制指针只能在当前函数内使用",
+        "D. 将指针锁定在指定的内存范围内，防止越界"
+      ],
+      "answer": "B",
+      "explanation": "`restrict` 是程序员对编译器的一个承诺：在当前作用域内，通过该 restrict 指针访问的对象不会被任何其他方式访问。这使得编译器可以做更激进的优化（如向量化循环、减少重复加载）。\n\n嵌入式场景：DSP 信号处理、memcpy 的高效实现等。例如 `void *memcpy(void *restrict dest, const void *restrict src, size_t n)` 中，restrict 告诉编译器 src 和 dest 不重叠，可以优化复制策略。"
+    },
+    {
+      "id": "c_016",
+      "category": "c_language",
+      "subcategory": "array-pointer",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["array", "pointer", "sizeof"],
+      "question": "以下代码在 32 位系统上输出什么？\n```c\nvoid foo(int arr[]) {\n    printf(\"%d\\n\", sizeof(arr));\n}\nint main() {\n    int arr[10];\n    printf(\"%d\\n\", sizeof(arr));\n    foo(arr);\n    return 0;\n}\n```",
+      "options": [
+        "A. 40 和 40",
+        "B. 40 和 4",
+        "C. 4 和 40",
+        "D. 10 和 10"
+      ],
+      "answer": "B",
+      "explanation": "- `main()` 中 `sizeof(arr)` = 10 × 4 = 40（10 个 int，每个 4 字节）\n- `foo()` 中 `sizeof(arr)` = 4（指针大小，因为数组作为函数参数传递时会退化为指针，`int arr[]` 等价于 `int *arr`）\n\n这是嵌入式面试的经典陷阱题，考察对数组退化（decay）的理解。在函数内部无法通过 sizeof 获取传入数组的大小，必须额外传递长度参数。"
+    },
+    {
+      "id": "c_017",
+      "category": "c_language",
+      "subcategory": "type-conversion",
+      "type": "code_analysis",
+      "difficulty": "hard",
+      "tags": ["integer-promotion", "type-conversion", "signed-unsigned"],
+      "question": "以下代码在比较时有 bug，请找出问题并修正。\n```c\nuint8_t  rx_count = 5;\nint8_t   expected = -1;\n\nif (rx_count > expected) {\n    // 预期进入此分支，但会吗？\n    process_data();\n}\n```",
+      "answer": "`expected`（int8_t = -1）在与 `rx_count`（uint8_t = 5）比较时，两个操作数都会进行**整型提升**到 int。但 -1 提升为 int 仍为 -1，而 5 提升为 int 为 5。实际上...等等，这里关键问题是：uint8_t 提升到 int（值为 5），int8_t 提升到 int（值为 -1），5 > -1 为 true，所以会进入分支。\n\n真正有 bug 的类似情况是：\n```c\nuint32_t a = 5;\nint32_t b = -1;\nif (a > b)  // 这里 int32_t 转为 uint32_t，-1 变成 0xFFFFFFFF = 4294967295，5 > 4294967295 = false\n```\n\n修正方法：统一使用有符号比较，或确保类型一致。",
+      "explanation": "有符号-无符号比较是嵌入式 C 中常见的 bug 来源。C 标准的规则：如果无符号类型等级 ≥ 有符号类型，则有符号数被转换为无符号数。建议启用编译器警告 `-Wsign-compare` 来捕获此类问题。"
+    },
+    {
+      "id": "c_018",
+      "category": "c_language",
+      "subcategory": "union",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["union", "type-punning", "memory"],
+      "question": "在嵌入式系统中，union 常用于类型双关（type punning）。以下代码的输出是什么？\n```c\nunion {\n    uint32_t word;\n    uint8_t  bytes[4];\n} data;\ndata.word = 0x12345678;\nprintf(\"%02X\\n\", data.bytes[0]);\n```\n在小端系统上运行。",
+      "options": [
+        "A. 12",
+        "B. 78",
+        "C. 34",
+        "D. 56"
+      ],
+      "answer": "B",
+      "explanation": "union 的所有成员共享同一块内存（起始地址相同）。在小端系统中，最低字节（0x78）存储在最低地址，所以 `data.bytes[0]` 访问的是最低地址的字节 = 0x78。大端系统则输出 0x12。Union 常用于协议解析（将字节数组和结构体共用）、大小端判断等场景。"
+    },
+    {
+      "id": "c_019",
+      "category": "c_language",
+      "subcategory": "interrupt-safe-code",
+      "type": "code_analysis",
+      "difficulty": "hard",
+      "tags": ["interrupt", "data-race", "shared-variable", "volatile"],
+      "question": "以下代码中，主循环和 ISR 共享一个 32 位计数器。这段代码有什么问题？\n```c\nvolatile uint32_t tick_count = 0;\n\nvoid SysTick_Handler(void) {\n    tick_count++;\n}\n\nuint32_t get_tick(void) {\n    return tick_count;\n}\n\nvoid main_loop(void) {\n    uint32_t last_tick = get_tick();\n    while (1) {\n        uint32_t current = get_tick();\n        if (current - last_tick >= 1000) {\n            // 每 1000 tick 执行\n            do_something();\n            last_tick = current;\n        }\n    }\n}\n```",
+      "answer": "在 32 位处理器上读取 `uint32_t` 是原子的（单条 LDR 指令），所以这段代码实际上在大多数 32 位 MCU 上是安全的。但如果处理器是 8 位或 16 位（如 AVR、MSP430），读取 32 位变量需要多条指令，可能被 ISR 打断导致数据撕裂（torn read）。\n\n此外，如果编译器优化了 `get_tick()`，使用了缓存的值而非每次都从内存读取，虽然这里已经用了 `volatile` 修饰 tick_count，但 get_tick 调用没有强制重读。更安全的写法是：\n```c\nuint32_t get_tick(void) {\n    uint32_t val;\n    __disable_irq();\n    val = tick_count;\n    __enable_irq();\n    return val;\n}\n```\n或者对于 Cortex-M，使用独占加载指令 LDREX。",
+      "explanation": "这个问题考察了对原子性、临界区保护和 volatile 的深入理解。在面试中，候选人需要能分析代码在特定架构下的行为。"
+    },
+    {
+      "id": "c_020",
+      "category": "c_language",
+      "subcategory": "array-size",
+      "type": "short_answer",
+      "difficulty": "easy",
+      "tags": ["array", "macro", "sizeof"],
+      "question": "请说明为什么在 C 语言中推荐使用 `sizeof(array)/sizeof(array[0])` 来获取数组元素个数，而不是直接使用硬编码的数字。并写出一个安全的宏 `ARRAY_SIZE(x)`。",
+      "answer": "**原因**：\n1. 避免魔法数字，提高代码可读性\n2. 数组大小变化时无需手动修改所有相关代码\n3. 减少维护错误\n\n**安全宏（两种常见写法）**：\n```c\n// 方式一：基本版本\n#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))\n\n// 方式二：编译期检查版本（如果传入指针而非数组，编译报错）\n#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]) \\\n    + (int)(sizeof(struct { int:-!!((void*)(x) != (void*)&(x)); })))\n\n// C11/C++11 可用静态断言版本\n#define ARRAY_SIZE(x) \\\n    (_Static_assert(!__builtin_types_compatible_p(typeof(x), typeof(&(x)[0])), \\\n                    \"Not an array\"), \\\n     sizeof(x) / sizeof((x)[0]))\n```",
+      "explanation": "这个宏在嵌入式代码中出镜率极高。高级版本的类型检查非常重要——如果错误地将指针传入，基本版会静默返回错误结果（指针大小 / 元素大小），导致隐蔽 bug。"
+    },
+    {
+      "id": "cpp_001",
+      "category": "cpp_embedded",
+      "subcategory": "raii",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["raii", "resource-management", "destructor"],
+      "question": "RAII（Resource Acquisition Is Initialization）是 C++ 的核心惯用法。在嵌入式系统中，RAII 最典型的应用场景是什么？",
+      "options": [
+        "A. 在构造函数中分配堆内存，在析构函数中释放",
+        "B. 在构造函数中获取资源（如关中断、获取锁），在析构函数中自动释放（如开中断、释放锁）",
+        "C. 将所有资源声明为全局变量以简化访问",
+        "D. 使用 `new` 和 `delete` 替代 `malloc` 和 `free`"
+      ],
+      "answer": "B",
+      "explanation": "RAII 的核心思想是将资源的生命周期绑定到对象的生命周期。在嵌入式系统中典型应用：\n- **临界区保护**：构造时关中断，析构时恢复\n- **互斥锁**：构造时 `lock()`，析构时 `unlock()`（如 `std::lock_guard`）\n- **GPIO 控制**：构造时初始化引脚，析构时恢复默认状态\n- **DMA 传输**：构造时配置并启动，析构时等待完成并清理\n\n即使函数以异常或提前返回退出，析构函数也会被自动调用，确保资源不泄漏。这在 C 语言中需要手动处理所有退出路径。"
+    },
+    {
+      "id": "cpp_002",
+      "category": "cpp_embedded",
+      "subcategory": "placement-new",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["placement-new", "memory-pool", "fixed-address"],
+      "question": "在嵌入式 C++ 中，placement new 的主要用途是什么？",
+      "options": [
+        "A. 取代 malloc，在堆上分配对象",
+        "B. 在指定的内存地址上构造对象（如内存池、共享内存、硬件寄存器映射地址）",
+        "C. 创建比原始类型更大的对象",
+        "D. 实现对象的深拷贝"
+      ],
+      "answer": "B",
+      "explanation": "Placement new 允许在已分配的内存地址上调用构造函数，而不分配新内存。嵌入式系统的典型用法：\n1. **内存池**：预分配一块静态内存，然后用 placement new 在上面构造对象\n2. **硬件寄存器**：将 C++ 对象直接映射到外设寄存器地址\n3. **共享内存**：在固定的物理地址上构造 IPC 对象\n4. **避免堆碎片化**：所有内存在编译时确定\n\n```cpp\n// 示例：在预分配的内存池上构造对象\nstatic uint8_t pool[sizeof(MyClass)] alignas(MyClass);\nMyClass *obj = new (pool) MyClass(params);\n// 注意：placement new 创建的对象需要手动调用析构函数\nobj->~MyClass();\n```",
+      "explanation": "Placement new 是嵌入式 C++ 的利器，配合静态内存池可以实现零动态内存分配的面向对象设计。"
+    },
+    {
+      "id": "cpp_003",
+      "category": "cpp_embedded",
+      "subcategory": "inheritance-overhead",
+      "type": "short_answer",
+      "difficulty": "medium",
+      "tags": ["vtable", "virtual", "overhead", "embedded-constraints"],
+      "question": "在资源受限的 MCU（如 Cortex-M0，64KB Flash，8KB RAM）上使用 C++ 虚函数，会带来哪些开销？在什么情况下仍然值得使用虚函数？",
+      "answer": "**虚函数开销**：\n1. **内存开销**：每个包含虚函数的类有一个 vtable（虚函数表），存储在 Flash 中（约 4 字节/虚函数）；每个对象有一个 vptr（指向 vtable 的指针），占用 4 字节 RAM\n2. **代码大小**：虚函数调用比直接调用多约 10-20 字节的间接跳转指令，且无法被内联优化\n3. **执行时间**：每次虚函数调用需要两次内存访问（读 vptr → 读 vtable 条目 → 跳转），比直接调用慢\n4. **ROM 额外开销**：vtable 本身和 RTTI 信息占用 Flash 空间\n\n**仍然值得使用的场景**：\n- 硬件抽象层（HAL）：多个外设共享同一接口（如多个 UART 端口）\n- 驱动框架：统一的 open/read/write/ioctl 接口\n- 状态机模式中的状态接口\n\n**避免使用的场景**：\n- 小而频繁调用的类（如 GPIO 引脚控制）→ 用 CRTP（奇异递归模板模式）替代\n- 极低功耗设备（每个字节都珍贵）",
+      "explanation": "在嵌入式 C++ 面试中，\"何时用/不用虚函数\"是考察候选人对性能与抽象之间权衡判断能力的高频题。"
+    },
+    {
+      "id": "cpp_004",
+      "category": "cpp_embedded",
+      "subcategory": "constexpr",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["constexpr", "compile-time", "optimization"],
+      "question": "C++11/14/17 中的 `constexpr` 关键字在嵌入式系统开发中的最大优势是什么？",
+      "options": [
+        "A. 让代码运行得更快",
+        "B. 在编译时计算表达式，减少运行时计算开销和代码体积",
+        "C. 替代所有 `#define` 宏",
+        "D. 使变量不可修改"
+      ],
+      "answer": "B",
+      "explanation": "`constexpr` 的核心优势是**编译时计算**：\n1. 查表数据（如 CRC 表、三角函数表、滤波器系数）在编译时生成，无需运行时初始化代码\n2. 计算结果直接嵌入到 .rodata 段或立即数中\n3. 零 RAM 占用、零启动时间成本\n4. 类型安全（相比 `#define` 宏）\n\n嵌入式应用示例：\n```cpp\nconstexpr uint32_t baud_rate_div(uint32_t pclk, uint32_t baud) {\n    return (pclk + baud/2) / baud;  // 四舍五入\n}\nUSART->BRR = baud_rate_div(72000000, 115200);  // 编译时计算 = 625\n```",
+      "explanation": "constexpr 是 C++ 在嵌入式领域的杀手级特性之一。"
+    },
+    {
+      "id": "cpp_005",
+      "category": "cpp_embedded",
+      "subcategory": "templates-vs-macros",
+      "type": "short_answer",
+      "difficulty": "medium",
+      "tags": ["template", "generic-programming", "code-bloat"],
+      "question": "在嵌入式 C++ 中，模板（templates）和宏（macros）都可以实现泛型编程。请从类型安全、代码体积、调试难度三个维度比较两者的优劣，并说明如何用 CRTP 替代虚函数。",
+      "answer": "**模板 vs 宏对比**：\n\n| 维度 | 模板 | 宏 |\n|------|------|-----|\n| 类型安全 | 强类型检查，编译错误有清晰提示 | 无类型检查，错误信息难懂 |\n| 代码体积 | 每个实例化生成独立代码，可能导致膨胀 | 每次展开都生成代码，同样会膨胀 |\n| 调试难度 | 可在模板中设断点（实例化后） | 无法调试宏内部 |\n| 命名空间 | 支持 | 不支持（全局污染） |\n| 特化/偏特化 | 支持 | 不支持 |\n\n**CRTP（奇异递归模板模式）替代虚函数**：\n```cpp\ntemplate<typename Derived>\nclass UART_Base {\npublic:\n    void send(uint8_t data) {\n        static_cast<Derived*>(this)->send_impl(data);\n    }\n};\n\nclass UART1 : public UART_Base<UART1> {\npublic:\n    void send_impl(uint8_t data) { /* 直接操作寄存器 */ }\n};\n```\nCRTP 在编译时完成多态，无需 vtable/vptr，零运行时开销，非常适合嵌入式场景。",
+      "explanation": "模板在嵌入式 C++ 是一把双刃剑 —— 用好了零开销抽象，用不好导致代码膨胀。"
+    },
+    {
+      "id": "cpp_006",
+      "category": "cpp_embedded",
+      "subcategory": "exceptions",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["exceptions", "embedded", "code-size"],
+      "question": "为什么大多数嵌入式 C++ 项目会禁用异常（`-fno-exceptions`）？",
+      "options": [
+        "A. C++ 异常机制有 bug，不可靠",
+        "B. 异常机制需要 RTTI 和展开表（unwind tables），显著增加代码体积和 RAM 使用，且抛出异常时的堆栈展开开销不可预测",
+        "C. 异常语法太复杂，嵌入式程序员不会用",
+        "D. 异常只能在 x86 平台上使用"
+      ],
+      "answer": "B",
+      "explanation": "禁用异常的原因：\n1. **代码体积**：栈展开表（.eh_frame 段）增加 10-30% 的代码大小\n2. **RAM 开销**：异常处理需要额外的运行时数据结构\n3. **不可预测的延迟**：抛出异常时的栈展开时间不确定，可能破坏实时性\n4. **堆依赖**：某些实现依赖堆分配，而嵌入式系统可能没有堆\n\n替代方案：\n- 使用返回值/错误码\n- `std::optional` / `std::expected`（C++23）\n- 断言（assert）进行开发时检查",
+      "explanation": ""
+    },
+    {
+      "id": "cpp_007",
+      "category": "cpp_embedded",
+      "subcategory": "operator-overloading",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["operator-overloading", "hardware-register", "bit-manipulation"],
+      "question": "设计一个 C++ 模板类 `Register<T>`，用于封装内存映射硬件寄存器，要求：\n1. 支持用 `=` 赋值和隐式转换为 T 类型读取\n2. 支持 `|=`、`&=`、`^=` 位操作\n3. L强制使用 `volatile` 访问\n4. 禁止拷贝但允许引用",
+      "code_template": "template<typename T>\nclass Register {\n    // 请实现\n};\n\n// 使用示例\n// Register<uint32_t> *reg = reinterpret_cast<Register<uint32_t>*>(0x40001000);\n// *reg = 0x01;\n// uint32_t val = *reg;\n",
+      "code_solution": "template<typename T>\nclass Register {\n    volatile T value;\npublic:\n    Register() = delete;\n    Register(const Register&) = delete;\n    Register& operator=(const Register&) = delete;\n    \n    // 读取操作符\n    operator T() const { return value; }\n    \n    // 赋值操作符\n    T operator=(T v) { value = v; return v; }\n    \n    // 位操作\n    T operator|=(T v) { value |= v; return value; }\n    T operator&=(T v) { value &= v; return value; }\n    T operator^=(T v) { value ^= v; return value; }\n    \n    // 位设置/清除\n    void set_bits(T mask) { value |= mask; }\n    void clear_bits(T mask) { value &= ~mask; }\n    bool bit_is_set(T bit) const { return (value & bit) != 0; }\n};\n",
+      "explanation": "这个模式将硬件寄存器封装为类型安全的 C++ 对象。`volatile T value` 确保每次访问都生成实际的总线读写。删除拷贝构造和赋值操作避免意外复制寄存器对象。这种封装在很多商业嵌入式 C++ 框架中都有应用。"
+    },
+    {
+      "id": "cpp_008",
+      "category": "cpp_embedded",
+      "subcategory": "smart-pointers",
+      "type": "short_answer",
+      "difficulty": "medium",
+      "tags": ["smart-pointer", "unique-ptr", "embedded", "heap"],
+      "question": "在嵌入式系统中，`std::unique_ptr` 是否可以替代手动 `new`/`delete`？有哪些注意事项和限制？为什么大多数嵌入式项目选择不动态分配内存？",
+      "answer": "**能否使用 unique_ptr**：技术上可以，但需要考虑：\n1. unique_ptr 仍然依赖堆分配（底层使用 `new`/`delete`）\n2. 需要提供自定义 deleter 来使用内存池分配器\n3. 如果使用 placement new + 内存池的组合，unique_ptr 的自定义 deleter 可以不释放内存，或归还到池中\n\n**为什么不动态分配**：\n1. **确定性**：malloc/new 的执行时间不确定\n2. **碎片化**：长期运行后堆碎片化导致分配失败\n3. **内存预算**：嵌入式系统 RAM 有限（KB 级到几 MB），高水印难以预测\n4. **认证要求**：MISRA C/C++、汽车功能安全（ISO 26262）等标准禁止或严格限制动态分配\n5. **启动时间**：静态分配在编译时确定，无运行时初始化开销\n\n**替代方案**：静态内存池 + placement new + unique_ptr（自定义无操作 deleter）\n```cpp\nauto pool_deleter = [](MyClass*) { /* 归还到内存池 */ };\nstd::unique_ptr<MyClass, decltype(pool_deleter)> ptr(\n    new (pool_alloc()) MyClass(), pool_deleter);\n```",
+      "explanation": "考察候选人对嵌入式内存管理约束的理解和对 C++ 标准库的灵活运用能力。"
+    },
+    {
+      "id": "cpp_009",
+      "category": "cpp_embedded",
+      "subcategory": "nullptr",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["nullptr", "null", "type-safety"],
+      "question": "C++11 引入的 `nullptr` 相比 C 语言的 `NULL` 有什么优势？在嵌入式函数重载场景下，为什么 `NULL` 会导致问题？",
+      "options": [
+        "A. nullptr 占用更少内存",
+        "B. nullptr 有明确的 `std::nullptr_t` 类型，在函数重载时能匹配指针参数而非整数参数",
+        "C. nullptr 运行更快",
+        "D. nullptr 仅在 C++ 中可用，没有实际优势"
+      ],
+      "answer": "B",
+      "explanation": "`NULL` 通常定义为 `0` 或 `(void*)0`，在 C++ 中不能转为 `void*`（与 C 不同），通常就是整数 0。当存在重载函数时：\n```cpp\nvoid handle(int val);      // 重载 1\nvoid handle(int *ptr);     // 重载 2\nhandle(NULL);   // 可能调用 handle(int)，不一定是预期行为！\nhandle(nullptr); // 确定调用 handle(int*)\n```\n`nullptr` 是 `std::nullptr_t` 类型，只能隐式转换为任意指针类型，不能转为整数，避免了重载歧义。这在嵌入式 HAL 设计中（回调函数指针等）非常重要。"
+    },
+    {
+      "id": "cpp_010",
+      "category": "cpp_embedded",
+      "subcategory": "startup",
+      "type": "short_answer",
+      "difficulty": "hard",
+      "tags": ["startup", "static-initialization", "crt0"],
+      "question": "在嵌入式 C++ 程序中，启动时除了 C 运行时的初始化（清零 .bss、初始化 .data），还需要处理哪些 C++ 特有的初始化工作？如果全局 C++ 对象的构造函数依赖另一个全局对象，会发生什么问题？",
+      "answer": "**C++ 特有的启动初始化**：\n1. **静态存储期对象的构造函数调用**：所有文件作用域和 static 对象必须初始化\n2. **`__init_array` / `.init_array` 段**：包含全局构造函数指针数组，启动代码需遍历调用\n3. **`__fini_array` / `.fini_array` 段**：析构函数指针数组（退出时调用）\n4. **atexit 注册**：管理析构函数调用\n\n**跨翻译单元初始化顺序问题（Static Initialization Order Fiasco）**：\n- C++ 标准不保证不同 .cpp 文件中全局对象的初始化顺序\n- 如果对象 A 的构造函数引用了对象 B，而 B 尚未初始化 → 未定义行为\n- 这在嵌入式系统中可能表现为外设初始化顺序依赖问题\n\n**解决方案**：\n1. **Meyers Singleton**：函数内 static 变量，首次调用时初始化（C++11 起线程安全）\n2. **显式初始化函数**：放弃全局对象，在 main() 中按正确顺序初始化\n3. **`__attribute__((init_priority(N)))`**（GCC）控制初始化优先级",
+      "explanation": "这道题考察对 C++ 运行时机制的底层理解，是高级嵌入式 C++ 岗位的常考题。"
+    },
+    {
+      "id": "embed_001",
+      "category": "embedded_core",
+      "subcategory": "interrupts",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["interrupt", "isr", "latency"],
+      "question": "以下关于中断服务程序（ISR）的说法，哪项是正确的？",
+      "options": [
+        "A. ISR 中可以使用 printf() 来打印调试信息",
+        "B. ISR 应该尽可能短小精悍，避免长时间占用 CPU",
+        "C. ISR 中可以调用任何函数，只要加了 volatile 修饰",
+        "D. ISR 执行期间，当前任务会自动释放其持有的所有互斥锁"
+      ],
+      "answer": "B",
+      "explanation": "ISR 设计的黄金法则：Keep it Short and Simple（KISS）。\n- ISR 执行时会屏蔽同级或更低优先级的中断，过长会导致其他中断丢失\n- 一般来说 ISR 只做必要的事：清除中断标志、读取/写入关键数据、发送信号量通知任务\n- 复杂处理放到任务或下半部（Bottom Half）中完成\n- 不应在 ISR 中调用可能阻塞的函数（如 printf、vTaskDelay）、获取互斥锁（应使用 FromISR 系列函数）"
+    },
+    {
+      "id": "embed_002",
+      "category": "embedded_core",
+      "subcategory": "dma",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["dma", "cache-coherency", "data-transfer"],
+      "question": "在带有数据缓存（D-Cache）的 ARM Cortex-M7 处理器上使用 DMA 传输数据时，需要特别注意什么问题？",
+      "options": [
+        "A. DMA 速度太快导致数据丢失",
+        "B. 缓存一致性问题——CPU 写入的数据可能还在缓存中未写入物理内存，DMA 读到旧数据",
+        "C. DMA 只能传输 32 位数据",
+        "D. DMA 和 CPU 不能同时访问同一块内存"
+      ],
+      "answer": "B",
+      "explanation": "这是带缓存 MCU 的经典问题：\n1. **CPU 写 → DMA 读**：数据在 cache 中未写回，DMA 读到 DDR/SRAM 中的旧数据\n2. **DMA 写 → CPU 读**：CPU 从 cache 读取，但 cache 中还是旧数据\n\n解决方案：\n- 使用 MPU 将 DMA 缓冲区配置为 non-cacheable\n- 或手动执行 cache 维护操作：`SCB_CleanDCache_by_Addr()` / `SCB_InvalidateDCache_by_Addr()` \n- 确保 DMA 缓冲区与 cache line 对齐"
+    },
+    {
+      "id": "embed_003",
+      "category": "embedded_core",
+      "subcategory": "rtos-task-scheduling",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["rtos", "scheduler", "priority", "preemptive"],
+      "question": "在 FreeRTOS 的抢占式调度（Preemptive Scheduling）中，什么事件会触发任务切换？",
+      "options": [
+        "A. 仅定时器 SysTick 中断",
+        "B. 高优先级任务就绪（如信号量释放、消息到达）、当前任务阻塞（如 vTaskDelay）、或 SysTick 时间片到期",
+        "C. 仅当当前任务主动调用 taskYIELD() 时",
+        "D. 仅当发生硬件中断时"
+      ],
+      "answer": "B",
+      "explanation": "FreeRTOS 抢占式调度中，任务切换触发条件：\n1. 更高优先级任务进入就绪态（中断中释放信号量、发送消息队列等）\n2. 当前运行任务进入阻塞/挂起态（等待信号量、延迟等）\n3. 时间片轮转：同优先级任务的时间片到期（如果 configUSE_TIME_SLICING = 1）\n4. 中断退出时（如果 configUSE_PREEMPTION = 1），检查是否需要切换到更高优先级任务\n\n理解这些对于设计实时系统至关重要。"
+    },
+    {
+      "id": "embed_004",
+      "category": "embedded_core",
+      "subcategory": "priority-inversion",
+      "type": "short_answer",
+      "difficulty": "hard",
+      "tags": ["priority-inversion", "mutex", "rtos", "mars-pathfinder"],
+      "question": "什么是优先级反转（Priority Inversion）？请用具体场景说明，并解释 FreeRTOS 如何使用优先级继承（Priority Inheritance）来解决此问题。NASA 的火星探路者任务中发生了什么与此相关的事故？",
+      "answer": "**优先级反转场景**：\n有三个任务：高优先级 H、中优先级 M、低优先级 L。\n1. L 获取了互斥锁，正在访问共享资源\n2. H 就绪，抢占 L 开始运行\n3. H 尝试获取同一互斥锁 → 被阻塞（L 持有锁）\n4. M 就绪，抢占 L（L 优先级最低）\n5. 结果：H 等待 M 完成才能得到锁，而 M 优先级低于 H —— 这就是优先级反转\n\n**优先级继承解决方案**：\n当 H 等待 L 持有的锁时，L 的优先级暂时提升到 H 的级别，防止 M 抢占 L。L 释放锁后恢复原优先级。FreeRTOS 中 `xSemaphoreCreateMutex()` 创建的互斥锁默认支持优先级继承。\n\n**火星探路者事故（1997）**：\n气象数据收集任务（低优先级）持有总线管理互斥锁时，通信任务（中优先级）抢占，导致高优先级总线分发任务长时间得不到锁，看门狗超时导致系统复位。这正是经典的优先级反转 bug，后来通过启用优先级继承修复。",
+      "explanation": "这是嵌入式 RTOS 面试必问题，优先级反转是实时系统设计中的核心概念。"
+    },
+    {
+      "id": "embed_005",
+      "category": "embedded_core",
+      "subcategory": "bootloader",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["bootloader", "firmware-update", "flash"],
+      "question": "嵌入式系统中，Bootloader 的核心职责是什么？\"双区备份\"（dual-bank）固件升级策略的优势是什么？",
+      "options": [
+        "A. Bootloader 仅负责初始化时钟，双区备份节省 Flash 空间",
+        "B. Bootloader 负责引导应用程序和固件升级，双区备份确保升级失败时仍可回滚到旧固件",
+        "C. Bootloader 仅在开发阶段使用，量产时移除",
+        "D. 双区备份意味着同时运行两个固件以提高性能"
+      ],
+      "answer": "B",
+      "explanation": "**Bootloader 职责**：\n1. 初始化基本硬件（时钟、Flash 控制器、通信接口）\n2. 检查升级标志，决定进入升级模式还是直接引导\n3. 通过 UART/SPI/USB/CAN 接收新固件并写入 Flash\n4. 验证固件完整性（CRC/签名校验）\n5. 跳转到应用程序\n\n**双区备份优势**：\n- Flash 分为 A 区和 B 区，旧固件在 A 区运行，新固件下载到 B 区\n- 升级失败（断电、校验失败）→ 回滚到 A 区，设备不会变砖\n- 支持 A/B 无缝切换（swap 后重启）\n- 缺点是需要双倍 Flash 空间"
+    },
+    {
+      "id": "embed_006",
+      "category": "embedded_core",
+      "subcategory": "watchdog",
+      "type": "short_answer",
+      "difficulty": "easy",
+      "tags": ["watchdog", "reliability", "fault-tolerance"],
+      "question": "解释独立看门狗（IWDG）和窗口看门狗（WWDG）的区别。在什么场景下，独立看门狗不够用而需要使用窗口看门狗？",
+      "answer": "**独立看门狗（IWDG）**：\n- 由独立的内部 RC 振荡器驱动（主时钟失效仍能工作）\n- 只要在计数器归零前\"喂狗\"即可（refresh 时间窗口从 0 到 timeout）\n- 用途：防止程序跑飞、死循环\n\n**窗口看门狗（WWDG）**：\n- 由系统时钟驱动（精度更高）\n- \"喂狗\"必须在特定时间窗口内：不能太早（小于下限）也不能太晚（超时）\n- 上限窗口防止程序提前\"喂狗\"（如果主循环失控快速执行）\n\n**WWDG 的必要场景**：\n当程序跑飞后主循环仍在错误地快速执行（包括喂狗操作），IWDG 始终被正常喂狗就不会复位。WWDG 通过\"不能太早喂狗\"的限制能检测到这种异常（程序执行时间偏离正常范围）。典型的应用包括实时控制系统中需要精确时序保证的场景。",
+      "explanation": "考察看门狗的高级用法，反映了对系统可靠性的理解深度。"
+    },
+    {
+      "id": "embed_007",
+      "category": "embedded_core",
+      "subcategory": "memory-barrier",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["memory-barrier", "dmb", "dsb", "cortex-m"],
+      "question": "ARM Cortex-M 中，DMB 和 DSB 内存屏障指令的区别是什么？在操作 NVIC（中断控制器）寄存器后，为什么通常需要 DSB？",
+      "options": [
+        "A. DMB 比 DSB 更快，所以总是用 DMB",
+        "B. DMB 保证内存访问顺序，DSB 不仅保证顺序还会等待所有未完成的内存访问和操作完成后再执行后续指令",
+        "C. DSB 会复位整个系统，DMB 不会",
+        "D. 两者没有区别，完全可以互换"
+      ],
+      "answer": "B",
+      "explanation": "**DMB（Data Memory Barrier）**：确保 DMB 之前的内存访问在 DMB 之后的访问之前完成（顺序保证），但 DMB 之后的指令可以开始执行。\n\n**DSB（Data Synchronization Barrier）**：比 DMB 更严格，DSB 之后的所有指令必须等待 DSB 之前的所有内存访问**和**缓存/分支预测操作完全完成后才开始执行。\n\n**NVIC 操作后需要 DSB**：使能中断后，可能已经有中断等待处理。DSB 确保中断使能操作在继续执行前已生效，避免在中断未真正使能时执行后续可能依赖中断的代码。\n\nISB（Instruction Sync Barrier）刷新流水线，通常配合使用。",
+      "explanation": "这是做 RTOS 移植、底层驱动时必须理解的概念。"
+    },
+    {
+      "id": "embed_008",
+      "category": "embedded_core",
+      "subcategory": "startup-code",
+      "type": "short_answer",
+      "difficulty": "medium",
+      "tags": ["startup", "vector-table", "reset-handler"],
+      "question": "请描述 ARM Cortex-M 处理器从上电到进入 main() 函数的完整启动流程，包括：复位向量、堆栈初始化、数据段初始化。为什么 .data 段需要从 Flash 复制到 RAM？",
+      "answer": "**启动流程**：\n1. **上电复位**：CPU 从向量表地址 0x00000000（或通过 VTOR 重映射）读取初始 SP 值和 PC\n   - 地址 0x00：初始 MSP（主堆栈指针）值\n   - 地址 0x04：Reset_Handler 地址 → 赋给 PC\n2. **Reset_Handler 执行**：\n   a. （可选）禁用全局中断\n   b. 将 .data 段从 Flash 复制到 RAM（初始化值在 Flash，运行时要放在 RAM 中才能修改）\n   c. 清零 .bss 段\n   d. （C++）调用 .init_array 中的全局构造函数\n   e. 初始化系统时钟（SystemInit()）\n   f. （可选）启用 FPU\n   g. 调用 main()\n\n**为什么 .data 要复制到 RAM**：\n- Flash 是只读的（或需要特殊操作才能写），而全局变量运行时需要修改\n- .data 的初始值在编译时确定，存储在 Flash 中（.rodata 旁边）\n- 启动代码将这些初始值复制到 RAM 指定的位置（链接脚本中标定的 .data 段 LMA 和 VMA）",
+      "explanation": "理解启动流程对于 debug 启动问题、实现 Bootloader 和自定义链接脚本都是必备知识。"
+    },
+    {
+      "id": "embed_009",
+      "category": "embedded_core",
+      "subcategory": "power-management",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["low-power", "sleep-mode", "wake-up"],
+      "question": "在低功耗嵌入式系统中，MCU 从 Sleep 模式被中断唤醒后，程序的执行流程是什么？",
+      "options": [
+        "A. 从 main() 函数开头重新执行",
+        "B. 执行 ISR，然后返回到 WFI/WFE 指令之后的指令继续执行",
+        "C. 执行 ISR，然后触发系统复位",
+        "D. 跳过 ISR 直接继续执行"
+      ],
+      "answer": "B",
+      "explanation": "MCU 执行 WFI（Wait For Interrupt）或 WFE（Wait For Event）进入休眠。当发生中断时：\n1. CPU 唤醒，执行该中断的 ISR\n2. ISR 返回后，执行 WFI/WFE 后面的指令继续运行\n3. 程序的上下文（寄存器、堆栈）在休眠期间保持不变\n\n不同休眠深度（Sleep、Stop、Standby）行为不同：\n- **Sleep**：仅 CPU 时钟停止，外设继续运行，RAM 内容保留\n- **Stop**：大部分时钟停止，RAM 保留，通过 EXTI 唤醒\n- **Standby**：RAM 丢失，唤醒后等同于复位（需要重新初始化）"
+    },
+    {
+      "id": "embed_010",
+      "category": "embedded_core",
+      "subcategory": "rtos-semaphore",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["rtos", "semaphore", "synchronization", "producer-consumer"],
+      "question": "使用 FreeRTOS 实现生产者-消费者模式：\n- 一个 ADC 采集任务（生产者）每 10ms 采集一次数据放入环形缓冲区\n- 一个数据处理任务（消费者）等待数据就绪后处理\n- 请写出关键代码，使用信号量实现同步，注意处理缓冲区满/空的情况",
+      "code_template": "// 假设已有环形缓冲区实现 ring_buf\n// 请实现以下两个任务\n\nvoid vADCTask(void *pvParameters) {\n    // 生产者：采集 ADC 数据放入缓冲区\n}\n\nvoid vProcessTask(void *pvParameters) {\n    // 消费者：取出数据并处理\n}\n",
+      "code_solution": "#define BUF_SIZE 64\nstatic RingBuf rb;\nstatic SemaphoreHandle_t xDataReadySem;  // 数据就绪信号量\nstatic SemaphoreHandle_t xBufMutex;      // 缓冲互斥锁\n\nvoid vADCTask(void *pvParameters) {\n    for (;;) {\n        uint16_t adc_val = ADC_Read();\n        \n        if (xSemaphoreTake(xBufMutex, portMAX_DELAY) == pdTRUE) {\n            if (!rb_is_full(&rb)) {\n                rb_push(&rb, adc_val);\n                xSemaphoreGive(xDataReadySem);  // 通知有新数据\n            }\n            xSemaphoreGive(xBufMutex);\n        }\n        vTaskDelay(pdMS_TO_TICKS(10));\n    }\n}\n\nvoid vProcessTask(void *pvParameters) {\n    for (;;) {\n        // 等待数据就绪\n        if (xSemaphoreTake(xDataReadySem, portMAX_DELAY) == pdTRUE) {\n            xSemaphoreTake(xBufMutex, portMAX_DELAY);\n            uint16_t data = rb_pop(&rb);\n            xSemaphoreGive(xBufMutex);\n            \n            ProcessData(data);\n        }\n    }\n}\n",
+      "explanation": "关键设计点：\n1. 使用信号量通知有数据就绪（而非忙等轮询）\n2. 互斥锁保护环形缓冲区的并发访问\n3. 生产者检查缓冲区满，而非覆盖数据\n4. 使用 `portMAX_DELAY` 确保可靠等待\n5. 生产者的 `vTaskDelay` 控制采样频率"
+    },
+    {
+      "id": "embed_011",
+      "category": "embedded_core",
+      "subcategory": "fpu-context-switch",
+      "type": "short_answer",
+      "difficulty": "hard",
+      "tags": ["fpu", "context-switch", "cortex-m4", "lazy-stacking"],
+      "question": "ARM Cortex-M4F/M7 支持硬件浮点（FPU）。在 RTOS 上下文切换时，FPU 寄存器（S0-S31）如何处理？什么是\"惰性压栈\"（Lazy Stacking），它如何优化性能？",
+      "answer": "**FPU 上下文处理**：\n- Cortex-M4F 有 32 个单精度浮点寄存器 S0-S31（每个 4 字节），加上 FPSCR 状态寄存器\n- 如果每次上下文切换都保存/恢复所有 FPU 寄存器 → 额外 132 字节的栈空间和时间开销\n- 大多数 RTOS 任务不使用浮点运算，全保存浪费严重\n\n**惰性压栈（Lazy Stacking）**：\n1. 进入异常/中断时，CPU 只自动压栈基本寄存器（R0-R3、R12、LR、PC、xPSR），不压 FPU 寄存器\n2. CPU 设置 FPCA（Floating Point Context Active）位和 EXC_RETURN 的 bit 4\n3. 如果新任务使用了 FPU 指令，CPU 检测到非活跃 FPU 上下文的访问 → 触发 UsageFault → 硬件自动将上一个任务的 FPU 寄存器压栈\n4. 如果新任务根本不碰 FPU，永远不需要保存/恢复 FPU 上下文\n\n**FreeRTOS 的实现**：\n- 配置 `configUSE_TASK_FPU_SUPPORT = 2` 使用惰性压栈\n- 任务创建时额外分配 FPU 上下文空间，但只在任务确实使用 FPU 时才使用\n- 这大幅减少了上下文切换的 CPU 周期数",
+      "explanation": "考察对硬件特性细节的深入理解，有 FPU 支持后如何高效做上下文切换。"
+    },
+    {
+      "id": "embed_012",
+      "category": "embedded_core",
+      "subcategory": "linker-script",
+      "type": "multiple_choice",
+      "difficulty": "hard",
+      "tags": ["linker-script", "memory-map", "ld"],
+      "question": "在 GNU LD 链接脚本中，`.`（dot）符号和 `ALIGN()` 指令的作用是什么？以下链接脚本片段的含义是什么？\n```ld\n.data : AT(ADDR(.text) + SIZEOF(.text))\n{\n    _sdata = .;\n    *(.data*)\n    . = ALIGN(4);\n    _edata = .;\n} >RAM\n```",
+      "options": [
+        "A. `.` 代表当前输出位置计数器，`ALIGN(4)` 将数据段放在 RAM 地址 0x04",
+        "B. `.` 是当前地址计数器/位置指针，`ALIGN(4)` 使下一次分配地址对齐到 4 字节边界；该脚本将 .data 段映射到 RAM，但其加载地址（LMA）紧跟在 .text 段之后的 Flash 中",
+        "C. `.` 是当前文件的字节数，`ALIGN(4)` 预留 4 字节空白",
+        "D. `.` 是段计数器，`ALIGN(4)` 将 Flash 擦除为 4 字节对齐的扇区"
+      ],
+      "answer": "B",
+      "explanation": "**`.` (Location Counter)**：当前在输出段中位置的指针。每次分配数据后自动递增。\n\n**`ALIGN(N)`**：将位置计数器 `.` 向上对齐到下一个 N 倍数。\n\n**脚本含义**：\n- `AT(...)` 指定加载内存地址（LMA）= text 段之后（Flash 中）\n- `>RAM` 指定虚拟内存地址（VMA）= RAM 中\n- `_sdata = .` 记录 .data 在 RAM 中的起始地址\n- `*(.data*)` 收集所有输入文件的 .data 段\n- `. = ALIGN(4)` 4 字节对齐（可能有 hole）\n- `_edata = .` 记录末尾\n\n启动代码中用 `_sdata` 和 `_edata` 来确定从 Flash 复制到 RAM 的范围。理解链接脚本对于自定义内存布局、Bootloader 开发至关重要。"
+    },
+    {
+      "id": "periph_001",
+      "category": "peripherals",
+      "subcategory": "gpio",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["gpio", "pull-up", "pull-down", "open-drain"],
+      "question": "STM32 GPIO 的\"开漏输出\"（Open-Drain）模式的主要应用场景是什么？",
+      "options": [
+        "A. 驱动 LED，提供最大亮度",
+        "B. 实现 I2C 总线、电平转换、多设备共享单线（线与逻辑）",
+        "C. 高速数据传输（比推挽输出更快）",
+        "D. 仅用于输入模式"
+      ],
+      "answer": "B",
+      "explanation": "开漏输出的特点：\n- 输出寄存器为 0 时：引脚拉到 GND（低电平）\n- 输出寄存器为 1 时：引脚高阻态（浮空），由外部上拉电阻决定高电平\n- 多个开漏输出可以连接在一起，任何一个拉低都会使总线变低（线与逻辑）\n\n典型应用：\n1. **I2C 总线**：SDA 和 SCL 都需要开漏输出 + 外部上拉\n2. **1-Wire 总线**：如 DS18B20 温度传感器\n3. **电平转换**：5V 容忍引脚接 3.3V MCU，通过上拉到 5V 实现\n4. **LED 多路复用**：多个 LED 共阳连接"
+    },
+    {
+      "id": "periph_002",
+      "category": "peripherals",
+      "subcategory": "spi",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["spi", "cpol", "cpha", "mode"],
+      "question": "SPI 有四种工作模式（Mode 0/1/2/3），由 CPOL 和 CPHA 决定。Mode 0 (CPOL=0, CPHA=0) 的时序特征是？",
+      "options": [
+        "A. 时钟空闲为高电平，在第一个边沿采样数据",
+        "B. 时钟空闲为低电平，在第一个边沿（上升沿）采样数据",
+        "C. 时钟空闲为低电平，在第二个边沿（下降沿）采样数据",
+        "D. 时钟空闲为高电平，在第二个边沿采样数据"
+      ],
+      "answer": "B",
+      "explanation": "SPI 四种模式快速记忆：\n- **CPOL** = Clock Polarity：空闲时电平（0=低，1=高）\n- **CPHA** = Clock Phase：采样边沿（0=第一个边沿，1=第二个边沿）\n\n| 模式 | CPOL | CPHA | 空闲电平 | 采样边沿 |\n|------|------|------|----------|----------|\n| 0 | 0 | 0 | 低 | 第一边沿=上升沿 |\n| 1 | 0 | 1 | 低 | 第二边沿=下降沿 |\n| 2 | 1 | 0 | 高 | 第一边沿=下降沿 |\n| 3 | 1 | 1 | 高 | 第二边沿=上升沿 |\n\n设备手册通常标明采用的模式，主从必须匹配。Mode 0 和 Mode 3 是最常用的。"
+    },
+    {
+      "id": "periph_003",
+      "category": "peripherals",
+      "subcategory": "i2c",
+      "type": "code_analysis",
+      "difficulty": "hard",
+      "tags": ["i2c", "ack", "nack", "protocol"],
+      "question": "I2C 通信中，主机向从机发送数据后收到 NACK 而非 ACK。请列举至少 4 种可能导致 NACK 的原因，以及如何排查。",
+      "answer": "**I2C NACK 的常见原因**：\n1. **从机地址错误**：7 位地址移位问题（有些库需要提供左移 1 位后的值，有些是原始 7 位地址）\n2. **从机不存在/未上电**：目标设备未焊接、供电问题、复位状态\n3. **从机忙**：从机正在处理上次命令（如 EEPROM 内部写周期），暂时不应答\n4. **总线电平问题**：上拉电阻过大（>10kΩ）导致上升沿太慢，波形不满足时序要求\n5. **时钟频率过高**：超过了从机能支持的最大速率\n6. **时序违例**：启动条件/停止条件的建立和保持时间不满足\n7. **数据格式错误**：发送的命令/寄存器地址从机无法识别\n\n**排查方法**：\n1. 用逻辑分析仪或示波器抓取 SDA/SCL 波形，确认地址、ACK 位、时序\n2. 用 I2C 扫描器扫描全部地址，确认从机是否在线\n3. 降低时钟频率测试\n4. 检查上拉电阻值（典型 4.7kΩ for 3.3V、2.2kΩ for 1.8V）\n5. 检查设备 RESET 引脚状态",
+      "explanation": "I2C 调试是嵌入式工程师最常见的实战场景之一，考察排查问题的系统性思维。"
+    },
+    {
+      "id": "periph_004",
+      "category": "peripherals",
+      "subcategory": "uart",
+      "type": "short_answer",
+      "difficulty": "easy",
+      "tags": ["uart", "baud-rate", "framing-error"],
+      "question": "UART 通信中，常见的\"帧错误\"（Framing Error）和\"溢出错误\"（Overrun Error）分别是什么原因导致的？波特率误差如何影响通信可靠性？",
+      "answer": "**帧错误（Framing Error）**：\n- 接收端在 STOP 位的预期位置检测到低电平而非高电平\n- 原因：波特率不匹配、时钟偏差过大、线路噪声干扰\n- 产生条件：通常双方的波特率误差总和超过约 5% 时开始出现\n\n**溢出错误（Overrun Error）**：\n- 接收移位寄存器收到新数据时，接收数据寄存器（RDR）中的数据还未被 CPU 读取\n- 原因：中断延迟过大 / 中断被长时间屏蔽 / 未使用 FIFO\n- 结果：新数据覆盖了旧数据\n\n**波特率误差的影响**：\n- UART 在每帧中间（bit 中心）采样，16x 过采样\n- 累积误差：10 位帧（1 start + 8 data + 1 stop），最后一位（stop）采样偏差最大\n- 5% 误差意味着 stop 位采样点时偏差约半个位周期，容易出错\n- 工程建议：波特率误差控制在 2% 以内\n- 使用外部晶振（而非内部 RC 振荡器）以获得精确波特率\n\n**波特率计算公式**：BRR = PCLK / (16 × BaudRate)，需验证实际值和目标值的偏差。"
+    },
+    {
+      "id": "periph_005",
+      "category": "peripherals",
+      "subcategory": "can",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["can", "arbitration", "identifier", "automotive"],
+      "question": "CAN 总线使用非破坏性逐位仲裁（Non-Destructive Bitwise Arbitration）。当两个节点同时发送不同 ID 的帧时，仲裁机制如何决定谁赢得总线？",
+      "options": [
+        "A. 随机退避，类似以太网 CSMA/CD",
+        "B. ID 越小的帧优先级越高——显性位（0）覆盖隐性位（1），发完仲裁域后仅胜者继续发送",
+        "C. 先到先得，谁先发送谁赢",
+        "D. 主节点决定优先级"
+      ],
+      "answer": "B",
+      "explanation": "CAN 仲裁机制：\n1. 每个节点在发送的同时也在监测总线电平\n2. 显性位（逻辑 0）电压驱动总线 → 覆盖隐性位（逻辑 1）\n3. 逐位比较 ID：当发送 1 但监测到总线是 0 时，该节点知道自己丢失了仲裁，立即停止发送转为接收\n4. 最后剩下的是 ID 最小的帧，继续发送完\n\n这是 CAN 总线最精巧的设计：仲裁不会损坏数据、仲裁过程就是传输过程（无带宽浪费）。这也是 CAN 总线能用于实时控制系统（汽车、工业）的关键原因。",
+      "explanation": "CAN 总线是汽车电子和工业控制中最常用的现场总线，理解仲裁机制是嵌入式工程师的基本功。"
+    },
+    {
+      "id": "periph_006",
+      "category": "peripherals",
+      "subcategory": "adc",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["adc", "resolution", "snr", "enob"],
+      "question": "一个 12 位 ADC 的参考电压是 3.3V，其理论分辨率（LSB）是多少？实际测量中，为什么 ENOB（有效位数）通常低于标称分辨率？",
+      "options": [
+        "A. LSB = 3.3/4096 ≈ 0.8mV；ENOB 降低是因为噪声、失真、INL/DNL 等非理想因素",
+        "B. LSB = 3.3/12 ≈ 275mV；ENOB 低是因为参考电压不准",
+        "C. LSB = 3.3V；ENOB 和分辨率无关",
+        "D. LSB = 12×3.3 = 39.6mV；ENOB 降低是因为采样率太高"
+      ],
+      "answer": "A",
+      "explanation": "**LSB 计算**：Vref / 2^N = 3.3V / 4096 ≈ 0.806mV\n\n**ENOB 低于标称分辨率的原因**：\n1. **热噪声**（kT/C 噪声）：采样电容的热噪声\n2. **量化噪声**：ADC 固有的 ±0.5 LSB 量化误差\n3. **INL/DNL**：积分/微分非线性\n4. **时钟抖动**：采样时钟的相位噪声\n5. **电源噪声**：供电纹波耦合到 ADC\n6. **参考电压噪声**和漂移\n\nENOB 可以通过公式估算：ENOB = (SINAD - 1.76) / 6.02，其中 SINAD 是信纳比（dB）。一个 12 位 ADC 的 ENOB 通常在 9-11 位之间。\n\n**实际意义**：选 ADC 时不要只看分辨率，要看数据手册中的 ENOB 或 SNR 指标。"
+    },
+    {
+      "id": "periph_007",
+      "category": "peripherals",
+      "subcategory": "pwm",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["pwm", "timer", "duty-cycle"],
+      "question": "PWM 输出中，占空比（Duty Cycle）和频率分别由定时器的哪些参数决定？在边沿对齐（Edge-Aligned）模式下，PWM 频率如何计算？",
+      "options": [
+        "A. 占空比由 ARR（自动重载值）决定，频率由 CCR（捕获比较值）决定",
+        "B. 频率 = 定时器时钟 / (ARR + 1)，占空比 = CCR / (ARR + 1)",
+        "C. 占空比和频率都由预分频器 PSC 单独决定",
+        "D. 占空比 = (ARR - CCR) / ARR，频率无法计算"
+      ],
+      "answer": "B",
+      "explanation": "边沿对齐 PWM 的基本公式：\n- **PWM 频率** = TIM_CLK / [(PSC + 1) × (ARR + 1)]\n- **占空比** = CCR / (ARR + 1) × 100%\n- **分辨率** = log₂(ARR + 1) 位\n\n示例：TIM_CLK = 72MHz，PSC = 71，ARR = 999\n- 计数器频率 = 72MHz / 72 = 1MHz\n- PWM 频率 = 1MHz / 1000 = 1kHz\n- 若 CCR = 500，占空比 = 500/1000 = 50%\n\n中心对齐模式（Center-Aligned）下，频率减半但波形对称性更好（谐波更少），适合电机控制。"
+    },
+    {
+      "id": "periph_008",
+      "category": "peripherals",
+      "subcategory": "timers",
+      "type": "coding_problem",
+      "difficulty": "hard",
+      "tags": ["timer", "input-capture", "frequency-measurement"],
+      "question": "使用 STM32 定时器的输入捕获（Input Capture）功能测量外部信号的频率。请用伪代码描述实现步骤和关键配置：\n1. 配置定时器为输入捕获模式\n2. 在捕获中断中计算频率\n3. 处理定时器溢出（32 位定时器也可能溢出）",
+      "code_template": "// 假设 TIM2, CH1 用于输入捕获\n// 请描述配置和 ISR 实现\n\nvoid TIM2_Config(void) {\n    // 配置步骤\n}\n\nvoid TIM2_IRQHandler(void) {\n    // 捕获中断处理\n}\n",
+      "code_solution": "// 全局变量\nstatic uint32_t last_capture = 0;\nstatic uint32_t overflow_count = 0;\nstatic float measured_freq = 0;\n\nvoid TIM2_Config(void) {\n    // 1. 使能时钟\n    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;\n    \n    // 2. 配置 GPIO 为复用功能（AF）\n    // GPIOA->MODER, AFR[0] 配置 PA0 为 AF1 (TIM2_CH1)\n    \n    // 3. 定时器基本配置\n    TIM2->PSC = 71;        // 72MHz / 72 = 1MHz → 1us 分辨率\n    TIM2->ARR = 0xFFFFFFFF; // 最大计数范围（32位）\n    \n    // 4. 输入捕获配置\n    TIM2->CCMR1 |= (0x01 << 0);   // CH1 输入，映射到 TI1\n    TIM2->CCER  |= TIM_CCER_CC1E;  // 使能 CH1 捕获\n    TIM2->CCER  |= (0x01 << 1);    // 上升沿触发\n    TIM2->DIER  |= TIM_DIER_CC1IE | TIM_DIER_UIE; // 捕获中断 + 溢出中断\n    TIM2->CR1   |= TIM_CR1_CEN;    // 使能定时器\n    \n    // 5. NVIC 配置\n    NVIC_EnableIRQ(TIM2_IRQn);\n}\n\nvoid TIM2_IRQHandler(void) {\n    // 溢出处理\n    if (TIM2->SR & TIM_SR_UIF) {\n        TIM2->SR = ~TIM_SR_UIF;\n        overflow_count++;\n    }\n    \n    // 捕获处理\n    if (TIM2->SR & TIM_SR_CC1IF) {\n        uint32_t current = TIM2->CCR1;\n        \n        // 计算两个上升沿之间的时间（处理溢出）\n        uint64_t total_ticks = (uint64_t)overflow_count * 0x100000000ULL \n                             + current - last_capture;\n        \n        measured_freq = 1000000.0f / total_ticks;  // 1us 分辨率 → Hz\n        \n        last_capture = current;\n        overflow_count = 0;\n        \n        TIM2->SR = ~TIM_SR_CC1IF;\n    }\n}\n",
+      "explanation": "输入捕获测频的关键点：\n1. 使用 32 位定时器 + 溢出计数防止低频率测量溢出\n2. 分辨率选择：PSC 越大，分辨率越低但最大测量时间越长\n3. 信号调理：外部信号可能需要施密特触发器整形\n4. 如果频率很高，改用 PWM 输入模式（双捕获，一个周期内获得周期和占空比）"
+    },
+    {
+      "id": "ds_001",
+      "category": "data_structures",
+      "subcategory": "ring-buffer",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["ring-buffer", "circular-buffer", "lock-free"],
+      "question": "实现一个无锁（Lock-Free）环形缓冲区，要求：\n1. 单生产者单消费者模式（SPSC）\n2. 使用 head 和 tail 指针，不需要 count 变量\n3. 支持判断满和空\n4. 如果不使用 count，如何区分\"满\"和\"空\"状态？请写出 push 和 pop 函数。",
+      "code_template": "typedef struct {\n    uint8_t *buffer;\n    uint32_t size;\n    volatile uint32_t head;  // 生产者写入位置\n    volatile uint32_t tail;  // 消费者读取位置\n} RingBuf;\n\nbool rb_push(RingBuf *rb, uint8_t data) {\n    // 请实现\n}\n\nbool rb_pop(RingBuf *rb, uint8_t *data) {\n    // 请实现\n}\n",
+      "code_solution": "typedef struct {\n    uint8_t *buffer;\n    uint32_t size;\n    volatile uint32_t head;\n    volatile uint32_t tail;\n} RingBuf;\n\n// 满判断：head 的下一个位置是 tail（牺牲一个存储单元）\nstatic inline bool rb_is_full(RingBuf *rb) {\n    return ((rb->head + 1) % rb->size) == rb->tail;\n}\n\n// 空判断：head == tail\nstatic inline bool rb_is_empty(RingBuf *rb) {\n    return rb->head == rb->tail;\n}\n\nbool rb_push(RingBuf *rb, uint8_t data) {\n    uint32_t next = (rb->head + 1) % rb->size;\n    if (next == rb->tail) {\n        return false;  // 满\n    }\n    rb->buffer[rb->head] = data;\n    // 内存屏障确保写入在 head 更新之前完成\n    __DMB();\n    rb->head = next;\n    return true;\n}\n\nbool rb_pop(RingBuf *rb, uint8_t *data) {\n    if (rb->tail == rb->head) {\n        return false;  // 空\n    }\n    *data = rb->buffer[rb->tail];\n    __DMB();\n    rb->tail = (rb->tail + 1) % rb->size;\n    return true;\n}\n\n// 获取已存储的数据数量\nuint32_t rb_count(RingBuf *rb) {\n    return (rb->head - rb->tail + rb->size) % rb->size;\n}\n",
+      "explanation": "**设计要点**：\n1. **牺牲一个单元区分满/空**：满 = head+1 == tail（N-1 个有效数据），空 = head == tail。这是最优雅的方案，避免使用 count 变量的原子操作需求\n2. **SPSC 无锁**：生产者只写 head，消费者只写 tail，各写各的，无竞争\n3. **内存屏障**：`__DMB()` 确保数据写入在指针更新前完成，防止消费者读到不完整数据\n4. **测试技巧**：head/tail 用 2 的幂次方 size → 位运算取模（`head & (size-1)`），更快"
+
+    },
+    {
+      "id": "ds_002",
+      "category": "data_structures",
+      "subcategory": "linked-list",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["linked-list", "static-allocation", "embedded"],
+      "question": "在嵌入式系统中实现链表时，通常不使用动态内存分配（malloc）。最常用的替代方法是什么？",
+      "options": [
+        "A. 每次需要新节点时从栈上分配",
+        "B. 使用静态预分配的节点池（Node Pool），配合空闲链表管理",
+        "C. 将所有节点存储在 EEPROM 中",
+        "D. 放弃链表，总是使用数组"
+      ],
+      "answer": "B",
+      "explanation": "静态节点池预分配的做法：\n```c\n#define MAX_NODES 32\nstatic ListNode node_pool[MAX_NODES];\nstatic ListNode *free_list;  // 空闲节点链表\n\nvoid list_pool_init(void) {\n    for (int i = 0; i < MAX_NODES - 1; i++) {\n        node_pool[i].next = &node_pool[i+1];\n    }\n    node_pool[MAX_NODES-1].next = NULL;\n    free_list = &node_pool[0];\n}\n\nListNode *alloc_node(void) {\n    ListNode *node = free_list;\n    if (node) free_list = node->next;\n    return node;\n}\n\nvoid free_node(ListNode *node) {\n    node->next = free_list;\n    free_list = node;\n}\n```\n这种方式内存使用可预测、无碎片、分配/释放 O(1)，非常适合嵌入式系统。"
+    },
+    {
+      "id": "ds_003",
+      "category": "data_structures",
+      "subcategory": "state-machine",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["state-machine", "fsm", "design-pattern"],
+      "question": "嵌入式系统中，有限状态机（FSM）是处理复杂逻辑的常用方法。请用 C 语言实现一个简单的事件驱动型状态机框架，支持：\n1. 状态转移表（State Transition Table）\n2. 进入/退出动作\n3. 使用函数指针实现状态处理\n\n以按键处理为例：短按切换 LED、长按进入设置模式。",
+      "code_template": "// 状态、事件枚举\ntypedef enum { STATE_IDLE, STATE_SHORT_PRESS, STATE_LONG_PRESS } State;\ntypedef enum { EVENT_PRESS, EVENT_RELEASE, EVENT_TIMEOUT } Event;\n\n// 请实现状态机框架和按键状态转移表\n",
+      "code_solution": "typedef enum { STATE_IDLE, STATE_SHORT_PRESS, STATE_LONG_PRESS } State;\ntypedef enum { EVENT_PRESS_DOWN, EVENT_PRESS_UP, EVENT_TIMEOUT_1S } Event;\n\ntypedef State (*StateHandler)(Event);\n\n// 状态处理函数声明\nState idle_handler(Event e);\nState short_handler(Event e);\nState long_handler(Event e);\n\n// 状态转移表\ntypedef struct {\n    State state;\n    StateHandler handler;\n    void (*on_enter)(void);\n    void (*on_exit)(void);\n} StateEntry;\n\nstatic uint32_t press_start_time = 0;\n\nStateEntry state_table[] = {\n    {STATE_IDLE,        idle_handler,  NULL, NULL},\n    {STATE_SHORT_PRESS, short_handler, NULL, NULL},\n    {STATE_LONG_PRESS,  long_handler, NULL, NULL},\n};\n\nstatic State current_state = STATE_IDLE;\n\nvoid fsm_dispatch(Event e) {\n    State next = state_table[current_state].handler(e);\n    if (next != current_state) {\n        if (state_table[current_state].on_exit)\n            state_table[current_state].on_exit();\n        if (state_table[next].on_enter)\n            state_table[next].on_enter();\n        current_state = next;\n    }\n}\n\nState idle_handler(Event e) {\n    switch (e) {\n        case EVENT_PRESS_DOWN:\n            press_start_time = get_tick();\n            return STATE_SHORT_PRESS;\n        default:\n            return STATE_IDLE;\n    }\n}\n\nState short_handler(Event e) {\n    switch (e) {\n        case EVENT_PRESS_UP:\n            toggle_led();   // 短按：切换 LED\n            return STATE_IDLE;\n        case EVENT_TIMEOUT_1S:\n            enter_setting(); // 长按：进入设置\n            return STATE_LONG_PRESS;\n        default:\n            return STATE_SHORT_PRESS;\n    }\n}\n\nState long_handler(Event e) {\n    switch (e) {\n        case EVENT_PRESS_UP:\n            return STATE_IDLE;\n        default:\n            return STATE_LONG_PRESS;\n    }\n}\n",
+      "explanation": "状态机设计要点：\n1. 转移表让状态机结构清晰，新增状态只需添加表项\n2. on_enter/on_exit 动作确保状态切换时的副作用可控\n3. 事件驱动：主循环或中断中调用 `fsm_dispatch(EVENT_xxx)`\n4. 对于复杂状态机，可引入层次状态机（HSM）或使用状态机生成工具"
+    },
+    {
+      "id": "ds_004",
+      "category": "data_structures",
+      "subcategory": "crc",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["crc", "error-detection", "communication"],
+      "question": "嵌入式通信协议中，CRC（循环冗余校验）广泛用于错误检测。CRC-8、CRC-16、CRC-32 的主要区别是什么？哪种更适用于 Modbus 协议？",
+      "options": [
+        "A. 区别仅在于校验值的位宽（8/16/32 位），适用场景取决于数据包大小和所需检错能力；Modbus 使用 CRC-16",
+        "B. 区别仅在于计算速度，选哪个都一样",
+        "C. CRC-32 最快，因为 32 位 MCU 一次处理 4 字节",
+        "D. 区别在于使用不同的位运算指令"
+      ],
+      "answer": "A",
+      "explanation": "**CRC 系列对比**：\n\n| 类型 | 校验值位宽 | 典型多项式 | 检错能力 | 典型应用 |\n|------|-----------|-----------|---------|---------|\n| CRC-8 | 8 位 | x⁸+x²+x+1 | 99.6% | 1-Wire, SMBus PEC |\n| CRC-16 | 16 位 | x¹⁶+x¹⁵+x²+1 (CRC-16-IBM) | 99.998% | Modbus, USB |\n| CRC-32 | 32 位 | x³²+x²⁶+...+1 | 99.99999998% | Ethernet, PNG, GZIP |\n\n**Modbus RTU 使用 CRC-16-IBM**，多项式 0x8005，初始值 0xFFFF，结果异或 0x0000，先传低字节。\n\n**优化技巧**：查表法比逐位计算快 8 倍以上。\n```c\n// 查表法 CRC-8\nuint8_t crc8_table[256];  // 预计算\nuint8_t crc8(uint8_t *data, uint32_t len) {\n    uint8_t crc = 0x00;\n    while (len--) crc = crc8_table[crc ^ *data++];\n    return crc;\n}\n```"
+    },
+    {
+      "id": "ds_005",
+      "category": "data_structures",
+      "subcategory": "pid",
+      "type": "short_answer",
+      "difficulty": "hard",
+      "tags": ["pid", "control-theory", "tuning"],
+      "question": "解释 PID 控制器中 P（比例）、I（积分）、D（微分）三项各自的作用。在嵌入式实现中，如何处理积分饱和（Integral Windup）和微分项的噪声放大问题？",
+      "answer": "**P、I、D 三项作用**：\n\n| 项 | 作用 | 效果 | 副作用 |\n|----|------|------|--------|\n| P（比例）| 根据当前误差调整输出 | 响应最快，减小稳态误差 | 过大导致振荡，不能完全消除稳态误差 |\n| I（积分）| 累积历史误差 | 消除稳态误差（offset） | 可能引起超调、积分饱和、响应变慢 |\n| D（微分）| 预判未来误差趋势 | 减小超调，加快响应 | 放大高频噪声，可能导致输出振荡 |\n\n**积分饱和（Integral Windup）处理**：\n```c\n// 条件积分 + 输出限幅\nintegral += error * dt;\n// 反计算钳位（Clamping）\nif (output > OUT_MAX) {\n    output = OUT_MAX;\n    integral -= error * dt;  // 回退积分项（反计算）\n} else if (output < OUT_MIN) {\n    output = OUT_MIN;\n    integral -= error * dt;\n}\n// 或使用积分分离：误差大时不积分，误差小时再启用积分\n```\n\n**微分噪声处理**：\n```c\n// 低通滤波微分项\nderivative = (1 - alpha) * derivative + alpha * (error - prev_error) / dt;\n// 或用\"对测量值微分\"而非\"对误差微分\"，避免设定值阶跃时的微分冲击\n// derivative_on_measurement = (prev_measurement - measurement) / dt\n```",
+      "explanation": "PID 是嵌入式控制领域最核心的算法，电机控制、温控、无人机飞控等都离不开它。"
+    },
+    {
+      "id": "ds_006",
+      "category": "data_structures",
+      "subcategory": "fir-filter",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["dsp", "fir", "filter", "signal-processing"],
+      "question": "实现一个简单的移动平均滤波器（Moving Average Filter）用于 ADC 数据去噪。要求：\n1. 窗口大小为 8（可配置）\n2. 使用环形缓冲区存储采样值\n3. 避免每次重新求和（用滑动窗口累加优化）\n4. 写出完整的 `adc_filter` 函数",
+      "code_template": "#define FILTER_WINDOW 8\n\nuint16_t adc_filter(uint16_t new_sample) {\n    // 请实现滑动窗口滤波\n}\n",
+      "code_solution": "#define FILTER_WINDOW 8\n\ntypedef struct {\n    uint16_t buffer[FILTER_WINDOW];\n    uint32_t sum;\n    uint8_t  index;\n    uint8_t  count;  // 已填充的样本数\n} MovingAvgFilter;\n\nstatic MovingAvgFilter adc_filt = {0};\n\nuint16_t adc_filter(uint16_t new_sample) {\n    // 如果窗口已满，减去即将被覆盖的旧值\n    if (adc_filt.count >= FILTER_WINDOW) {\n        adc_filt.sum -= adc_filt.buffer[adc_filt.index];\n    } else {\n        adc_filt.count++;\n    }\n    \n    // 存入新值，更新总和\n    adc_filt.buffer[adc_filt.index] = new_sample;\n    adc_filt.sum += new_sample;\n    \n    // 移动索引\n    adc_filt.index = (adc_filt.index + 1) % FILTER_WINDOW;\n    \n    // 返回平均值\n    return (uint16_t)(adc_filt.sum / adc_filt.count);\n}\n\n// 指数移动平均（EMA）版本 —— 更省内存\nuint16_t adc_filter_ema(uint16_t new_sample) {\n    static uint16_t filtered = 0;\n    static bool first = true;\n    \n    if (first) {\n        filtered = new_sample;\n        first = false;\n    } else {\n        // alpha = 0.125 (1/8), 新的占 1/8, 旧的占 7/8\n        filtered = filtered + ((int16_t)(new_sample - filtered) >> 3);\n    }\n    return filtered;\n}\n",
+      "explanation": "滑动窗口优化要点：\n1. 维护一个 sum，避免每次重新计算 8 个数的和（从 O(N) 降到 O(1)）\n2. 用 count 处理初始填充阶段（不足窗口大小时只用已有数据）\n3. 环形缓冲区 index 处理覆盖逻辑\n4. EMA 版本仅需 2 字节 RAM，适合极端资源受限场景\n\n权衡：移动平均对突变响应慢但平滑效果好；EMA 省内存、响应更快但滤波效果稍弱。"
+    },
+    {
+      "id": "ds_007",
+      "category": "data_structures",
+      "subcategory": "lookup-table",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["lookup-table", "optimization", "rom"],
+      "question": "在嵌入式系统中，查表法（Lookup Table）常用于替代复杂计算。以下哪种场景最适合使用查表法？",
+      "options": [
+        "A. 将两个变量相加",
+        "B. 计算 sin(x) 函数值（已知 x 为 0-90 度的整数角度）用于电机矢量控制",
+        "C. 字符串拼接操作",
+        "D. 动态内存分配"
+      ],
+      "answer": "B",
+      "explanation": "查表法适合的场景：\n1. **计算昂贵但输入范围有限**：三角函数 (sin/cos/tan)、平方根、对数、CRC 表\n2. **固定的非线性映射**：NTC 热敏电阻温度转换、Gamma 校正\n3. **状态机输出**：根据状态和事件查表得到下一个状态\n4. **字符转换**：ASCII 转 7 段数码管编码\n\n嵌入式优势：\n- 表存储在 Flash 中（不占 RAM）\n- O(1) 查找时间\n- 可预测的 CPU 周期\n- 例：sin 查表 0-90°，步进 1° = 91 个 uint16_t = 182 字节 Flash\n\n```c\nconst uint16_t sin_table[91] = {0, 17, 34, 52, 69, 87, 104, 121, ...};\nuint16_t sin_lookup(uint8_t deg) { return sin_table[deg % 91]; }\n```"
+    },
+    {
+      "id": "dbg_001",
+      "category": "debugging",
+      "subcategory": "hard-fault",
+      "type": "short_answer",
+      "difficulty": "hard",
+      "tags": ["hard-fault", "debug", "cortex-m", "cfsr"],
+      "question": "在 ARM Cortex-M 上遇到 HardFault 异常时，你会如何排查？请描述你的调试步骤，以及如何使用 CFSR（可配置故障状态寄存器）和栈帧来定位问题代码。",
+      "answer": "**HardFault 排查步骤**：\n\n1. **确认故障类型**：读取 CFSR（地址 0xE000ED28）\n   - `CFSR[7:0]` = MFSR（MemManage Fault）：非对齐访问、MPU 违规、访问无效地址\n   - `CFSR[15:8]` = BFSR（Bus Fault）：总线错误（如访问未启用的外设）\n   - `CFSR[31:16]` = UFSR（Usage Fault）：未定义指令、除零、非对齐（关闭时）、协处理器访问\n\n2. **获取故障地址**：\n   - MMFAR（0xE000ED34）：触发 MemManage Fault 的地址\n   - BFAR（0xE000ED38）：触发 Bus Fault 的地址\n\n3. **从栈帧获取故障时的 PC 和 LR**：\n   ```c\n   void HardFault_Handler_C(uint32_t *hardfault_args) {\n       uint32_t stacked_r0  = hardfault_args[0];\n       uint32_t stacked_r1  = hardfault_args[1];\n       uint32_t stacked_r2  = hardfault_args[2];\n       uint32_t stacked_r3  = hardfault_args[3];\n       uint32_t stacked_r12 = hardfault_args[4];\n       uint32_t stacked_lr  = hardfault_args[5];  // 故障时的返回地址\n       uint32_t stacked_pc  = hardfault_args[6];  // 故障时的程序计数器\n       uint32_t stacked_psr = hardfault_args[7];\n       \n       printf(\"Fault at PC: 0x%08X, LR: 0x%08X\\n\", stacked_pc, stacked_lr);\n       // 用 addr2line 或反汇编窗口定位源代码行\n   }\n   \n   __attribute__((naked))\n   void HardFault_Handler(void) {\n       __asm volatile(\n           \"TST LR, #4\\n\"        // 检查 EXC_RETURN bit2 确定 MSP/PSP\n           \"ITE EQ\\n\"\n           \"MRSEQ R0, MSP\\n\"\n           \"MRSNE R0, PSP\\n\"\n           \"B HardFault_Handler_C\\n\"\n       );\n   }\n   ```\n\n4. **常见故障原因检查清单**：\n   - 栈溢出（数组越界、递归过深）→ 检查栈 watermark\n   - 访问 NULL / 野指针 → PC 在异常地址\n   - 外设时钟未使能就访问其寄存器 → BFAR 指向外设地址\n   - 非对齐访问 → CFSR 的 MFSR 位被置",
+      "explanation": "HardFault 调试是嵌入式开发者的必备技能，面试常考实际调试思路。"
+    },
+    {
+      "id": "dbg_002",
+      "category": "debugging",
+      "subcategory": "assert",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "tags": ["assert", "debugging", "defensive-programming"],
+      "question": "在嵌入式 C 开发中，`assert()` 宏的主要用途是什么？为什么发布版本通常会禁用 assert？",
+      "options": [
+        "A. 处理运行时错误（如文件不存在）",
+        "B. 在开发阶段捕获逻辑错误和违反前置条件的 bug，发布版通过 NDEBUG 禁用以减少代码体积和开销",
+        "C. 替代所有错误处理机制",
+        "D. 实现单元测试"
+      ],
+      "answer": "B",
+      "explanation": "`assert()` 用于捕获\"不应该发生\"的编程错误：\n- 前置条件检查：`assert(ptr != NULL);`\n- 不变量检查：`assert(count <= MAX_ITEMS);`\n- 逻辑断言：`assert(state < NUM_STATES);`\n\n发布版禁用的原因：\n1. 代码体积：每个 assert 增加几十字节\n2. 执行时间开销\n3. 产品中触发 assert 不如优雅降级（看门狗复位或进入安全模式）\n\n**嵌入式自定义 assert**：\n```c\n#ifdef DEBUG\n#define MY_ASSERT(expr) \\\n    do { if (!(expr)) { \\\n        printf(\"ASSERT: %s:%d: %s\\n\", __FILE__, __LINE__, #expr); \\\n        while(1); /* 暂停以便调试器查看 */ \\\n    } } while(0)\n#else\n#define MY_ASSERT(expr) ((void)0)\n#endif\n```"
+    },
+    {
+      "id": "dbg_003",
+      "category": "debugging",
+      "subcategory": "gdb",
+      "type": "short_answer",
+      "difficulty": "medium",
+      "tags": ["gdb", "debug", "remote-debug"],
+      "question": "使用 GDB + OpenOCD/J-Link 远程调试嵌入式程序时，如何做到：\n1. 在 HardFault 时自动中断并显示故障位置\n2. 观察外设寄存器的值\n3. 在 Flash 中设置硬件断点（而非软件断点）",
+      "answer": "**远程调试流程**：\n\n```bash\n# 1. 启动 OpenOCD（或 J-Link GDB Server）\nopenocd -f interface/stlink.cfg -f target/stm32f4x.cfg\n\n# 2. 启动 GDB，连接远程目标\narm-none-eabi-gdb firmware.elf\n(gdb) target extended-remote localhost:3333\n(gdb) monitor reset halt\n(gdb) load\n\n# 3. HardFault 自动中断\n(gdb) break HardFault_Handler\n(gdb) continue\n# 当进入 HardFault 时，查看栈帧获取故障 PC\n(gdb) x/8wx $sp     # 查看栈帧\n# stacked_pc 在 offset 6 (根据 EXC_RETURN 判断 MSP/PSP)\n\n# 4. 查看故障寄存器\n(gdb) x/1wx 0xE000ED28  # CFSR\n(gdb) x/1wx 0xE000ED34  # MMFAR\n(gdb) x/1wx 0xE000ED38  # BFAR\n\n# 5. 查看外设寄存器（如 GPIOA）\n(gdb) x/10wx 0x40020000  # GPIOA 基址\n# 或用 CMSIS SVD 文件加载外设定义\n(gdb) monitor reg        # 通过 JTAG/SWD 直接读寄存器\n\n# 6. 设置硬件断点（Flash 中，最多 4-8 个）\n(gdb) hbreak main.c:150\n(gdb) hbreak *0x08001000\n# 如果硬件断点用完，使用软件断点（仅 RAM 中有效）\n```\n\n**常见问题**：\n- 优化后代码中变量被优化掉 → 用 `volatile` 或降低优化等级调试\n- SWO/SWO 输出调试信息无需断点\n- `backtrace` 在 Thumb 模式下可能需要使用 `set arm force-mode thumb`",
+      "explanation": "远程调试是嵌入式开发日常操作，面试考察工具熟练度。"
+    },
+    {
+      "id": "dbg_004",
+      "category": "debugging",
+      "subcategory": "stack-overflow",
+      "type": "code_analysis",
+      "difficulty": "medium",
+      "tags": ["stack-overflow", "watermark", "debug"],
+      "question": "嵌入式系统中栈溢出（Stack Overflow）是最难排查的 bug 之一。以下哪种方法可以有效地在运行时检测栈溢出？分析每种方案的优缺点。",
+      "answer": "**栈溢出检测方案**：\n\n**1. 栈水印（Stack Watermark/Pattern Fill）**：\n```c\n// 启动时用固定模式填充栈\n#define STACK_FILL_PATTERN 0xDEADBEEF\nvoid stack_fill(void) {\n    extern uint32_t _estack;  // 栈顶（链接脚本定义）\n    extern uint32_t __StackLimit;  // 栈底\n    uint32_t *p = &__StackLimit;\n    while (p < &_estack) *p++ = STACK_FILL_PATTERN;\n}\n\n// 定期检查水印\nuint32_t stack_remaining(void) {\n    extern uint32_t __StackLimit;\n    uint32_t *p = &__StackLimit;\n    uint32_t remaining = 0;\n    while (*p == STACK_FILL_PATTERN && p < &_estack) {\n        p++; remaining++;\n    }\n    return remaining * 4;  // 剩余字节数\n}\n```\n优点：实现简单、零运行时开销（仅检查时有）\n缺点：不能实时检测，只能事后查看高水印\n\n**2. MPU 栈保护**（Cortex-M3+）：\n- 用 MPU 在栈底设置保护区（Guard Region）\n- 栈溢出到保护区时触发 MemManage Fault\n- 优点：实时检测、硬件级保护\n- FreeRTOS 中 `configCHECK_FOR_STACK_OVERFLOW = 2` 配合使用\n\n**3. 编译器栈分析**：\n- `-fstack-usage` 编译选项生成每个函数的栈使用报告\n- 静态分析工具（如 StackAnalyzer）\n- 优点：编译时检测\n- 缺点：不能处理递归和函数指针间接调用",
+      "explanation": "栈溢出导致的行为完全不可预测（可能表现为变量被莫名其妙修改、HardFault、看门狗复位），因此检测手段至关重要。"
+    },
+    {
+      "id": "dbg_005",
+      "category": "debugging",
+      "subcategory": "watchpoint",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "tags": ["watchpoint", "debug", "data-breakpoint"],
+      "question": "调试器的 Watchpoint（数据断点）与普通断点的区别是什么？在嵌入式调试中，Watchpoint 的典型应用场景有哪些限制？",
+      "options": [
+        "A. Watchpoint 在指定内存地址被读/写时触发；普通断点在指定代码地址被执行时触发。硬件 Watchpoint 数量通常只有 2-6 个",
+        "B. Watchpoint 只能看不能设置，普通断点可以设置",
+        "C. Watchpoint 是软件模拟的，断点是硬件的",
+        "D. 没有区别，只是不同调试器的叫法"
+      ],
+      "answer": "A",
+      "explanation": "**区别**：\n- **断点（Breakpoint）**：当 PC 到达指定地址时触发 → 监测\"执行了什么代码\"\n- **Watchpoint（数据断点/监视点）**：当指定内存地址被读/写时触发 → 监测\"谁修改了我的变量\"\n\n**限制**：\n- Cortex-M3/M4 通常只有 2-4 个硬件 Watchpoint（由 DWT 单元提供）\n- 监测的地址必须对齐（4 字节对齐用于 4 字节变量）\n- 监测范围有限（通常 4 字节）\n- 不支持复杂的条件表达式\n\n**典型场景**：\n- \"我的全局变量被谁偷偷改了？\" → 对该变量设置写入 Watchpoint\n- \"为什么这个中断标志位无法清除？\" → 对该寄存器地址设置写入 Watchpoint\n\nGDB 命令：`(gdb) watch variable_name` / `(gdb) watch *0x20000100`"
+    },
+    {
+      "id": "code_001",
+      "category": "coding_problems",
+      "subcategory": "button-debounce",
+      "type": "coding_problem",
+      "difficulty": "easy",
+      "tags": ["debounce", "button", "timer", "gpio"],
+      "question": "机械按键在按下和释放时会产生抖动（通常 5-20ms）。请实现一个消抖函数，要求：\n1. 使用软件延时去抖（非阻塞方式，使用定时器计数）\n2. 返回稳定的按键状态\n3. 支持检测按下事件（下降沿）和释放事件（上升沿）\n4. 不要使用阻塞延时（delay_ms）",
+      "code_template": "#define DEBOUNCE_MS 20\n\ntypedef struct {\n    // 请定义去抖所需的状态变量\n} ButtonDebounce;\n\n// 每 1ms 调用一次（放在定时器 ISR 或主循环轮询）\nbool button_debounce(ButtonDebounce *btn, bool current_raw_state) {\n    // 请实现返回去抖后的稳定状态\n}\n\n// 检测按下事件\nbool button_is_pressed(ButtonDebounce *btn);\n",
+      "code_solution": "#define DEBOUNCE_MS 20\n\ntypedef struct {\n    uint8_t  stable_state;   // 去抖后稳定状态 (0/1)\n    uint8_t  last_stable;    // 上一次稳定状态（用于边沿检测）\n    uint8_t  debounce_cnt;   // 消抖计数器\n    uint8_t  raw_last;       // 上一次原始电平\n} ButtonDebounce;\n\n// 每 1ms 调用\nbool button_debounce(ButtonDebounce *btn, bool raw) {\n    // 电平变化 → 重置计数器\n    if (raw != btn->raw_last) {\n        btn->debounce_cnt = 0;\n        btn->raw_last = raw;\n    }\n    // 电平持续稳定 → 计数器递增\n    else {\n        if (btn->debounce_cnt < DEBOUNCE_MS) {\n            btn->debounce_cnt++;\n        }\n        // 达到消抖时间 → 确认状态\n        if (btn->debounce_cnt >= DEBOUNCE_MS) {\n            btn->last_stable = btn->stable_state;\n            btn->stable_state = raw;\n        }\n    }\n    return btn->stable_state;\n}\n\n// 检测按下事件（高→低）\nbool button_is_pressed(ButtonDebounce *btn) {\n    return (btn->last_stable == 1 && btn->stable_state == 0);\n}\n\n// 检测释放事件（低→高）\nbool button_is_released(ButtonDebounce *btn) {\n    return (btn->last_stable == 0 && btn->stable_state == 1);\n}\n\n// 使用示例\n// ButtonDebounce btn1 = {0};\n// void SysTick_Handler(void) {\n//     bool raw = HAL_GPIO_ReadPin(BTN1_GPIO_Port, BTN1_Pin);\n//     button_debounce(&btn1, raw);\n// }\n// void main_loop(void) {\n//     if (button_is_pressed(&btn1)) { LED_Toggle(); }\n// }\n",
+      "explanation": "设计要点：\n1. **非阻塞**：不使用 delay_ms，而是依赖定时器中断 1ms 计数\n2. **边沿检测**：通过 `last_stable` 和 `stable_state` 比较检测按下/释放\n3. **逻辑**：只在电平稳定持续 20ms 后才确认状态变化\n\n如果需要节省资源，也可以使用 3 次采样投票法（3 次采样中 ≥2 次为 1 则确认为 1），延时仅约 2-3ms。"
+    },
+    {
+      "id": "code_002",
+      "category": "coding_problems",
+      "subcategory": "binary-protocol",
+      "type": "coding_problem",
+      "difficulty": "hard",
+      "tags": ["protocol", "framing", "serial", "parser"],
+      "question": "设计并实现一个简单的二进制协议帧解析器。协议格式如下：\n- 起始标志：0xAA 0x55（2 字节）\n- 数据长度：1 字节（N，表示 Payload 长度，范围 0-255）\n- Payload：N 字节\n- 校验和：1 字节（从长度字节开始到 Payload 末尾的所有字节的 XOR）\n\n要求：\n1. 实现状态机逐字节解析\n2. 处理字节填充（数据中出现 0xAA 时转义为 0xAA 0x00）\n3. 返回完整的 Payload 和解析结果\n4. 能处理不完整数据流（粘包/半包）",
+      "code_template": "typedef enum {\n    STATE_IDLE,\n    STATE_HEADER,\n    STATE_LENGTH,\n    STATE_PAYLOAD,\n    STATE_CHECKSUM\n} ParserState;\n\n// 请实现完整的解析器\n",
+      "code_solution": "typedef enum {\n    STATE_WAIT_HEAD1,\n    STATE_WAIT_HEAD2,\n    STATE_LENGTH,\n    STATE_PAYLOAD,\n    STATE_CHECKSUM,\n    STATE_ESCAPE\n} ParserState;\n\ntypedef struct {\n    ParserState state;\n    uint8_t buf[256];\n    uint8_t length;\n    uint8_t index;\n    uint8_t checksum;\n    bool    escape_next;\n} ProtoParser;\n\nvoid parser_init(ProtoParser *p) {\n    p->state = STATE_WAIT_HEAD1;\n    p->index = 0;\n    p->escape_next = false;\n}\n\ntypedef enum {\n    PARSE_INCOMPLETE = 0,\n    PARSE_OK = 1,\n    PARSE_CHECKSUM_ERR = -1,\n    PARSE_LENGTH_ERR = -2\n} ParseResult;\n\nParseResult parser_feed(ProtoParser *p, uint8_t byte, \n                         uint8_t **payload, uint8_t *payload_len) {\n    // 转义处理（最高优先级）\n    if (byte == 0xAA && !p->escape_next && p->state != STATE_WAIT_HEAD1) {\n        p->escape_next = true;\n        return PARSE_INCOMPLETE;\n    }\n    \n    if (p->escape_next) {\n        p->escape_next = false;\n        if (byte != 0x00 && byte != 0xAA) {\n            goto reset;  // 非法转义序列，重置\n        }\n        // 否则 byte 继续正常处理（0xAA 或 0x00）\n    }\n    \n    switch (p->state) {\n    case STATE_WAIT_HEAD1:\n        if (byte == 0xAA) {\n            p->state = STATE_WAIT_HEAD2;\n        }\n        return PARSE_INCOMPLETE;\n        \n    case STATE_WAIT_HEAD2:\n        if (byte == 0x55) {\n            p->state = STATE_LENGTH;\n        } else {\n            p->state = STATE_WAIT_HEAD1;\n        }\n        return PARSE_INCOMPLETE;\n        \n    case STATE_LENGTH:\n        p->length = byte;\n        p->checksum = byte;  // 校验和包含长度字节\n        p->index = 0;\n        if (p->length > 255) goto reset;\n        p->state = (p->length > 0) ? STATE_PAYLOAD : STATE_CHECKSUM;\n        return PARSE_INCOMPLETE;\n        \n    case STATE_PAYLOAD:\n        p->buf[p->index++] = byte;\n        p->checksum ^= byte;\n        if (p->index >= p->length) {\n            p->state = STATE_CHECKSUM;\n        }\n        return PARSE_INCOMPLETE;\n        \n    case STATE_CHECKSUM:\n        p->state = STATE_WAIT_HEAD1;\n        if (byte == p->checksum) {\n            *payload = p->buf;\n            *payload_len = p->length;\n            return PARSE_OK;\n        }\n        return PARSE_CHECKSUM_ERR;\n    }\n    \nreset:\n    p->state = STATE_WAIT_HEAD1;\n    p->escape_next = false;\n    return PARSE_INCOMPLETE;\n}\n",
+      "explanation": "这个解析器处理了嵌入式串口通信的几个关键问题：\n1. **帧同步**：0xAA 0x55 作为起始标志\n2. **转义机制**：数据中的 0xAA → 0xAA 0x00 防止误识别帧头\n3. **状态机**：逐字节处理，不阻塞\n4. **校验**：XOR 简单高效\n5. **错误恢复**：遇到非法状态自动回到 WAIT_HEAD1 重新同步\n\n实际应用中常见改进：增加超时机制、增加帧序号防重传、CRC 替代 XOR。"
+    },
+    {
+      "id": "code_003",
+      "category": "coding_problems",
+      "subcategory": "endian-swap",
+      "type": "coding_problem",
+      "difficulty": "easy",
+      "tags": ["endianness", "swap", "network-byte-order"],
+      "question": "实现大小端转换函数：\n1. `uint16_t swap16(uint16_t val)` — 16 位字节交换\n2. `uint32_t swap32(uint32_t val)` — 32 位字节交换\n3. 使用编译时检测（利用预定义宏）自动判断当前系统大小端\n4. 写出 `htonl()` 和 `ntohl()` 的嵌入式版本（不使用系统库）",
+      "code_template": "// 请实现\nuint16_t swap16(uint16_t val) { }\nuint32_t swap32(uint32_t val) { }\n",
+      "code_solution": "// 1. 纯位运算版本（总是可用）\nuint16_t swap16(uint16_t val) {\n    return (uint16_t)((val << 8) | (val >> 8));\n}\n\nuint32_t swap32(uint32_t val) {\n    return ((val << 24)                  ) |\n           ((val <<  8) & 0x00FF0000UL) |\n           ((val >>  8) & 0x0000FF00UL) |\n           ((val >> 24)                  );\n}\n\n// 2. ARM CMSIS 内置高效指令版本\n// uint32_t swap32(uint32_t val) {\n//     return __REV(val);   // Cortex-M3+ 单周期 REV 指令\n// }\n// uint16_t swap16(uint16_t val) {\n//     return __REV16(val);\n// }\n\n// 3. 编译时检测大小端\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__\n    #define IS_LITTLE_ENDIAN 1\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__\n    #define IS_LITTLE_ENDIAN 0\n#else\n    // 运行时检测（不推荐，编译器可优化掉死代码）\n    static inline bool is_little_endian(void) {\n        const uint16_t test = 0x0001;\n        return (*(const uint8_t*)&test) == 0x01;\n    }\n#endif\n\n// 4. htonl/ntohl（主机字节序 → 网络字节序 = 大端）\n#if IS_LITTLE_ENDIAN\n    #define htonl(x) swap32(x)\n    #define ntohl(x) swap32(x)\n    #define htons(x) swap16(x)\n    #define ntohs(x) swap16(x)\n#else\n    #define htonl(x) (x)\n    #define ntohl(x) (x)\n    #define htons(x) (x)\n    #define ntohs(x) (x)\n#endif\n",
+      "explanation": "大小端转换在网络通信、跨平台数据交换、文件格式解析中频繁出现。ARM Cortex-M 的 REV 指令可以在单周期内完成 32 位字节反转，效率最高。"
+    },
+    {
+      "id": "code_004",
+      "category": "coding_problems",
+      "subcategory": "memory-pool",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["memory-pool", "static-allocation", "no-malloc"],
+      "question": "实现一个固定大小的内存池分配器（Fixed-Size Block Allocator），要求：\n1. 预分配 N 个相同大小的内存块\n2. 分配/释放操作 O(1) 时间复杂度\n3. 使用空闲链表管理（free list）\n4. 不使用 malloc，所有内存在编译时确定",
+      "code_template": "#define BLOCK_SIZE  64\n#define BLOCK_COUNT 16\n\ntypedef struct {\n    // 请定义内存池结构\n} MemPool;\n\nvoid  mempool_init(MemPool *pool);\nvoid *mempool_alloc(MemPool *pool);\nvoid  mempool_free(MemPool *pool, void *ptr);\n",
+      "code_solution": "#define BLOCK_SIZE  64\n#define BLOCK_COUNT 16\n\n// 确保 block 对齐要求\n#define BLOCK_ALIGN  __attribute__((aligned(8)))\n\ntypedef struct MemBlock {\n    struct MemBlock *next;  // 空闲链表的 next 指针\n    // ... 后面是用户数据\n} MemBlock;\n\ntypedef struct {\n    MemBlock *free_list;\n    uint8_t   pool_mem[BLOCK_COUNT][BLOCK_SIZE] BLOCK_ALIGN;\n    uint32_t  total_blocks;\n    uint32_t  free_blocks;\n} MemPool;\n\nvoid mempool_init(MemPool *pool) {\n    pool->free_list = (MemBlock *)pool->pool_mem;\n    pool->total_blocks = BLOCK_COUNT;\n    pool->free_blocks = BLOCK_COUNT;\n    \n    // 串联所有空闲块\n    uint8_t *block_ptr = pool->pool_mem;\n    for (int i = 0; i < BLOCK_COUNT - 1; i++) {\n        MemBlock *block = (MemBlock *)block_ptr;\n        block->next = (MemBlock *)(block_ptr + BLOCK_SIZE);\n        block_ptr += BLOCK_SIZE;\n    }\n    // 最后一块的 next = NULL\n    ((MemBlock *)(pool->pool_mem + (BLOCK_COUNT - 1) * BLOCK_SIZE))->next = NULL;\n}\n\nvoid *mempool_alloc(MemPool *pool) {\n    if (!pool->free_list) return NULL;  // 池已空\n    \n    MemBlock *block = pool->free_list;\n    pool->free_list = block->next;\n    pool->free_blocks--;\n    \n    return (void *)block;\n}\n\nvoid mempool_free(MemPool *pool, void *ptr) {\n    if (!ptr) return;\n    \n    MemBlock *block = (MemBlock *)ptr;\n    block->next = pool->free_list;\n    pool->free_list = block;\n    pool->free_blocks++;\n}\n\n// 诊断函数\nuint32_t mempool_free_count(MemPool *pool) {\n    return pool->free_blocks;\n}\n\nbool mempool_contains(MemPool *pool, void *ptr) {\n    uintptr_t start = (uintptr_t)pool->pool_mem;\n    uintptr_t end = start + BLOCK_COUNT * BLOCK_SIZE;\n    uintptr_t p = (uintptr_t)ptr;\n    return (p >= start && p < end);\n}\n",
+      "explanation": "固定大小内存池是嵌入式系统的核心数据结构之一：\n1. **O(1)** 分配/释放，无碎片\n2. **确定性强**：分配永远不会失败（除非池已空）\n3. **无需 malloc**：所有内存在 .bss 段\n4. **next 指针复用**：空闲时用 block 开头存储 next 指针；分配后给用户用，不浪费空间\n\n适用于消息队列缓冲区、网络包缓冲区、对象池等场景。"
+    },
+    {
+      "id": "code_005",
+      "category": "coding_problems",
+      "subcategory": "interrupt-safe-log",
+      "type": "coding_problem",
+      "difficulty": "medium",
+      "tags": ["log", "interrupt-safe", "debug", "ring-buffer"],
+      "question": "设计一个中断安全的调试日志系统：\n1. 日志存储在环形缓冲区中（RAM）\n2. ISR 中可以安全地写入日志（不需要关中断）\n3. 主循环中读取并输出日志\n4. 每条日志包含：时间戳（tick）、日志等级、消息字符串\n5. 当缓冲区满时覆盖最旧的日志（不阻塞）",
+      "code_template": "typedef enum { LOG_ERR, LOG_WARN, LOG_INFO, LOG_DBG } LogLevel;\n\ntypedef struct {\n    uint32_t tick;\n    LogLevel level;\n    char     msg[64];\n} LogEntry;\n\ntypedef struct {\n    // 请定义日志缓冲区\n} DebugLog;\n\nvoid log_write_isr(DebugLog *log, LogLevel lv, const char *fmt, ...);\nvoid log_flush(DebugLog *log);  // 主循环调用，输出日志\n",
+      "code_solution": "#define LOG_BUF_SIZE 64\n\ntypedef struct {\n    LogEntry entries[LOG_BUF_SIZE];\n    volatile uint32_t write_idx;  // ISR 写入位置\n    uint32_t read_idx;             // 主循环读取位置\n} DebugLog;\n\n// ISR-safe 写入（只修改 write_idx）\nvoid log_write_isr(DebugLog *log, LogLevel lv, const char *fmt, ...) {\n    uint32_t idx = log->write_idx;\n    LogEntry *entry = &log->entries[idx];\n    \n    entry->tick = get_system_tick();  // ISR-safe (假设实现是安全的)\n    entry->level = lv;\n    \n    // 简化版格式化（vsnprintf 可能非重入，但大多数嵌入式环境安全）\n    va_list args;\n    va_start(args, fmt);\n    vsnprintf(entry->msg, sizeof(entry->msg), fmt, args);\n    va_end(args);\n    \n    // 内存屏障确保消息写入完成后再更新索引\n    __DMB();\n    log->write_idx = (idx + 1) % LOG_BUF_SIZE;\n}\n\n// 主循环中调用，输出所有积压日志\nvoid log_flush(DebugLog *log) {\n    while (log->read_idx != log->write_idx) {\n        LogEntry *entry = &log->entries[log->read_idx];\n        printf(\"[%6lu] %c: %s\\n\",\n               entry->tick,\n               \"EWID\"[entry->level],\n               entry->msg);\n        log->read_idx = (log->read_idx + 1) % LOG_BUF_SIZE;\n    }\n}\n\n// 获取日志数量（诊断用）\nuint32_t log_count(DebugLog *log) {\n    int32_t diff = (int32_t)(log->write_idx - log->read_idx);\n    if (diff < 0) diff += LOG_BUF_SIZE;\n    return (uint32_t)diff;\n}\n\n// 使用示例\nstatic DebugLog g_log;\n// ISR 中:\n// log_write_isr(&g_log, LOG_WARN, \"ADC overrange: %d\", val);\n// main() 中:\n// log_flush(&g_log);\n",
+      "explanation": "日志系统设计要点：\n1. **ISR 安全**：ISR 只写 write_idx，主循环只读 read_idx — 无锁设计\n2. **环形缓冲**：满时覆盖旧数据，不会阻塞\n3. **vsnprintf**：大多数嵌入式 libc（newlib-nano）的实现是线程安全的（但有缓冲区大小限制）\n4. **内存屏障**：确保数据写入在索引更新前完成\n5. **可扩展**：可通过 UART/SPI/SWO 输出，或保留在 RAM 供调试器查看"
+    }
+  ]
+}
