@@ -1,8 +1,8 @@
 {
   "metadata": {
     "created": "2026-06-04",
-    "last_updated": "2026-06-05 08:43:19",
-    "total_days_generated": 4,
+    "last_updated": "2026-06-09 08:36:10",
+    "total_days_generated": 6,
     "repeat_window_days": 90
   },
   "usage": {
@@ -275,51 +275,153 @@
       ],
       "category": "peripherals",
       "difficulty": "hard"
+    },
+    "embed_003": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "embedded_core",
+      "difficulty": "medium"
+    },
+    "embed_005": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "embedded_core",
+      "difficulty": "medium"
+    },
+    "c_011": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "c_language",
+      "difficulty": "easy"
+    },
+    "ds_003": {
+      "first_served": "2026-06-06",
+      "times_served": 1,
+      "dates": [
+        "2026-06-06"
+      ],
+      "category": "data_structures",
+      "difficulty": "medium"
+    },
+    "periph_001": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "peripherals",
+      "difficulty": "easy"
+    },
+    "periph_004": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "peripherals",
+      "difficulty": "easy"
+    },
+    "c_020": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "c_language",
+      "difficulty": "easy"
+    },
+    "code_002": {
+      "first_served": "2026-06-07",
+      "times_served": 1,
+      "dates": [
+        "2026-06-07"
+      ],
+      "category": "coding_problems",
+      "difficulty": "hard"
+    },
+    "ds_001": {
+      "first_served": "2026-06-08",
+      "times_served": 1,
+      "dates": [
+        "2026-06-08"
+      ],
+      "category": "data_structures",
+      "difficulty": "medium"
+    },
+    "ds_004": {
+      "first_served": "2026-06-08",
+      "times_served": 1,
+      "dates": [
+        "2026-06-08"
+      ],
+      "category": "data_structures",
+      "difficulty": "medium"
+    },
+    "embed_011": {
+      "first_served": "2026-06-08",
+      "times_served": 1,
+      "dates": [
+        "2026-06-08"
+      ],
+      "category": "embedded_core",
+      "difficulty": "hard"
+    },
+    "c_001": {
+      "first_served": "2026-06-08",
+      "times_served": 1,
+      "dates": [
+        "2026-06-08"
+      ],
+      "category": "c_language",
+      "difficulty": "easy"
+    },
+    "c_002": {
+      "first_served": "2026-06-09",
+      "times_served": 1,
+      "dates": [
+        "2026-06-09"
+      ],
+      "category": "c_language",
+      "difficulty": "easy"
+    },
+    "periph_002": {
+      "first_served": "2026-06-09",
+      "times_served": 1,
+      "dates": [
+        "2026-06-09"
+      ],
+      "category": "peripherals",
+      "difficulty": "medium"
+    },
+    "periph_003": {
+      "first_served": "2026-06-09",
+      "times_served": 1,
+      "dates": [
+        "2026-06-09"
+      ],
+      "category": "peripherals",
+      "difficulty": "hard"
+    },
+    "dbg_001": {
+      "first_served": "2026-06-09",
+      "times_served": 1,
+      "dates": [
+        "2026-06-09"
+      ],
+      "category": "debugging",
+      "difficulty": "hard"
     }
   },
   "daily_log": {
-    "2026-06-06": {
-      "primary_category": "coding_problems",
-      "question_ids": [
-        "code_004",
-        "code_001",
-        "periph_007",
-        "dbg_002"
-      ],
-      "types": [
-        "coding_problem",
-        "coding_problem",
-        "multiple_choice",
-        "multiple_choice"
-      ],
-      "difficulties": [
-        "medium",
-        "easy",
-        "easy",
-        "easy"
-      ]
-    },
-    "2026-06-07": {
-      "primary_category": "debugging",
-      "question_ids": [
-        "dbg_005",
-        "dbg_003",
-        "code_005",
-        "c_004"
-      ],
-      "types": [
-        "multiple_choice",
-        "short_answer",
-        "coding_problem",
-        "short_answer"
-      ],
-      "difficulties": [
-        "medium",
-        "medium",
-        "medium",
-        "medium"
-      ]
-    },
     "2026-06-04": {
       "primary_category": "embedded_core",
       "question_ids": [
@@ -358,9 +460,93 @@
         "easy",
         "hard"
       ]
+    },
+    "2026-06-06": {
+      "primary_category": "embedded_core",
+      "question_ids": [
+        "embed_003",
+        "embed_005",
+        "c_011",
+        "ds_003"
+      ],
+      "types": [
+        "multiple_choice",
+        "multiple_choice",
+        "multiple_choice",
+        "coding_problem"
+      ],
+      "difficulties": [
+        "medium",
+        "medium",
+        "easy",
+        "medium"
+      ]
+    },
+    "2026-06-07": {
+      "primary_category": "peripherals",
+      "question_ids": [
+        "periph_001",
+        "periph_004",
+        "c_020",
+        "code_002"
+      ],
+      "types": [
+        "multiple_choice",
+        "short_answer",
+        "short_answer",
+        "coding_problem"
+      ],
+      "difficulties": [
+        "easy",
+        "easy",
+        "easy",
+        "hard"
+      ]
+    },
+    "2026-06-08": {
+      "primary_category": "data_structures",
+      "question_ids": [
+        "ds_001",
+        "ds_004",
+        "embed_011",
+        "c_001"
+      ],
+      "types": [
+        "coding_problem",
+        "multiple_choice",
+        "short_answer",
+        "multiple_choice"
+      ],
+      "difficulties": [
+        "medium",
+        "medium",
+        "hard",
+        "easy"
+      ]
+    },
+    "2026-06-09": {
+      "primary_category": "coding_problems",
+      "question_ids": [
+        "c_002",
+        "periph_002",
+        "periph_003",
+        "dbg_001"
+      ],
+      "types": [
+        "multiple_choice",
+        "multiple_choice",
+        "code_analysis",
+        "short_answer"
+      ],
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "hard"
+      ]
     }
   },
   "rotation_state": {
-    "current_index": 1
+    "current_index": 5
   }
 }
