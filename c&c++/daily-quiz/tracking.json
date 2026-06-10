@@ -1,8 +1,8 @@
 {
   "metadata": {
     "created": "2026-06-04",
-    "last_updated": "2026-06-09 08:36:10",
-    "total_days_generated": 6,
+    "last_updated": "2026-06-10 08:36:26",
+    "total_days_generated": 7,
     "repeat_window_days": 90
   },
   "usage": {
@@ -419,6 +419,42 @@
       ],
       "category": "debugging",
       "difficulty": "hard"
+    },
+    "c_003": {
+      "first_served": "2026-06-10",
+      "times_served": 1,
+      "dates": [
+        "2026-06-10"
+      ],
+      "category": "c_language",
+      "difficulty": "medium"
+    },
+    "c_005": {
+      "first_served": "2026-06-10",
+      "times_served": 1,
+      "dates": [
+        "2026-06-10"
+      ],
+      "category": "c_language",
+      "difficulty": "medium"
+    },
+    "c_006": {
+      "first_served": "2026-06-10",
+      "times_served": 1,
+      "dates": [
+        "2026-06-10"
+      ],
+      "category": "c_language",
+      "difficulty": "medium"
+    },
+    "periph_005": {
+      "first_served": "2026-06-10",
+      "times_served": 1,
+      "dates": [
+        "2026-06-10"
+      ],
+      "category": "peripherals",
+      "difficulty": "medium"
     }
   },
   "daily_log": {
@@ -544,9 +580,30 @@
         "hard",
         "hard"
       ]
+    },
+    "2026-06-10": {
+      "primary_category": "c_language",
+      "question_ids": [
+        "c_003",
+        "c_005",
+        "c_006",
+        "periph_005"
+      ],
+      "types": [
+        "multiple_choice",
+        "coding_problem",
+        "multiple_choice",
+        "multiple_choice"
+      ],
+      "difficulties": [
+        "medium",
+        "medium",
+        "medium",
+        "medium"
+      ]
     }
   },
   "rotation_state": {
-    "current_index": 5
+    "current_index": 6
   }
 }
